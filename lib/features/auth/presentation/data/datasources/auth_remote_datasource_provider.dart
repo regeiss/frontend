@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import '../../../../../core/config/logging/app_logger.dart';
 import '../../../../../core/network/dio_provider.dart';
@@ -5,6 +6,7 @@ import '../../../../../core/network/dio_provider.dart';
 import '../../../../../core/storage/secure_storage.dart';
 import '../../domain/entities/user.dart';
 
+// CORREÇÃO: Mudança do provider para usar Dio em vez de DioClient
 final authRemoteDataSourceProvider = Provider<AuthRemoteDataSource>(
     (ref) => AuthRemoteDataSourceImpl(ref.read(dioProvider)));
 
@@ -26,15 +28,17 @@ abstract class AuthRemoteDataSource {
 }
 
 class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
-  AuthRemoteDataSourceImpl(this._dioClient);
-  final DioClient _dioClient;
+  // CORREÇÃO: Mudança para usar Dio em vez de DioClient
+  AuthRemoteDataSourceImpl(this._dio);
+  final Dio _dio;
 
   @override
   Future<AuthTokens> login(LoginRequest loginRequest) async {
     try {
       AppLogger.network('Attempting login', data: loginRequest.toJson());
 
-      final response = await DioClient.post(
+      // CORREÇÃO: Usar a instância _dio em vez dos métodos estáticos DioClient
+      final response = await _dio.post(
         '/auth/login/',
         data: loginRequest.toJson(),
       );
@@ -64,7 +68,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       AppLogger.network('Attempting registration',
           data: registerRequest.toJson());
 
-      final response = await DioClient.post(
+      final response = await _dio.post(
         '/auth/register/',
         data: registerRequest.toJson(),
       );
@@ -88,7 +92,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       final refreshToken = await SecureStorage.getRefreshToken();
 
       if (refreshToken != null) {
-        await DioClient.post(
+        await _dio.post(
           '/auth/logout/',
           data: {'refresh': refreshToken},
         );
@@ -106,7 +110,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     try {
       AppLogger.network('Attempting token refresh');
 
-      final response = await DioClient.post(
+      final response = await _dio.post(
         '/auth/refresh/',
         data: {'refresh': refreshToken},
       );
@@ -137,7 +141,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     try {
       AppLogger.network('Fetching user profile');
 
-      final response = await DioClient.get('/auth/profile/');
+      final response = await _dio.get('/auth/profile/');
 
       if (response.statusCode == 200) {
         final user = User.fromJson(response.data);
@@ -166,7 +170,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
 
       AppLogger.network('Updating user profile', data: data);
 
-      final response = await DioClient.patch(
+      final response = await _dio.patch(
         '/auth/profile/',
         data: data,
       );
@@ -192,7 +196,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     try {
       AppLogger.network('Attempting password change');
 
-      final response = await DioClient.post(
+      final response = await _dio.post(
         '/auth/change-password/',
         data: {
           'current_password': currentPassword,

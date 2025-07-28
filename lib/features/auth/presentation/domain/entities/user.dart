@@ -9,7 +9,10 @@ class User with _$User {
     required int id,
     required String username,
     required String email,
-    required bool isStaff, required bool isActive, required DateTime dateJoined, String? firstName,
+    required bool isStaff, 
+    required bool isActive, 
+    required DateTime dateJoined, 
+    String? firstName,
     String? lastName,
   }) = _User;
 
@@ -38,9 +41,8 @@ class LoginRequest with _$LoginRequest {
   factory LoginRequest.fromJson(Map<String, dynamic> json) =>
       _$LoginRequestFromJson(json);
 
-  @override
-  // ignore: always_declare_return_types
-  toJson() {}
+  // CORREÇÃO: Implementar o método toJson corretamente
+  Map<String, dynamic> toJson() => _$LoginRequestToJson(this);
 }
 
 @freezed

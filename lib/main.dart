@@ -56,7 +56,7 @@ Future<void> _initializeCoreServices() async {
     AppLogger.init();
     
     // Initialize Database
-    final database = AppDatabase();
+    final database = AppDatabase.instance;
     await database.initialize();
     
     // Initialize Notification Service

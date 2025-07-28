@@ -7,8 +7,7 @@ import '../../../../core/storage/secure_storage.dart';
 
 import '../data/repositories/auth_repository_provider.dart';
 import '../domain/entities/user.dart';
-
-part 'auth_notifier.freezed.dart';
+part 'auth_state.freezed.dart';
 
 @freezed
 class AuthState with _$AuthState {
@@ -19,10 +18,10 @@ class AuthState with _$AuthState {
   const factory AuthState.error(String message) = _Error;
 }
 
-final authNotifierProvider = StateNotifierProvider<AuthNotifier, AuthState>((ref) => AuthNotifier(ref.read(authRepositoryProvider)));
+final authNotifierProvider = StateNotifierProvider<AuthNotifier, AuthState>(
+    (ref) => AuthNotifier(ref.read(authRepositoryProvider)));
 
 class AuthNotifier extends StateNotifier<AuthState> {
-
   AuthNotifier(this._authRepository) : super(const AuthState.initial()) {
     _checkAuthStatus();
   }
@@ -31,7 +30,7 @@ class AuthNotifier extends StateNotifier<AuthState> {
   Future<void> _checkAuthStatus() async {
     try {
       final isLoggedIn = await SecureStorage.isLoggedIn();
-      
+
       if (isLoggedIn) {
         // Try to get user profile to verify token validity
         final user = await _authRepository.getUserProfile();
@@ -59,13 +58,12 @@ class AuthNotifier extends StateNotifier<AuthState> {
       );
 
       final authTokens = await _authRepository.login(loginRequest);
-      
+
       // Save tokens and user data
       await _saveAuthData(authTokens);
-      
+
       state = AuthState.authenticated(authTokens.user);
       AppLogger.info('Login successful for user: ${authTokens.user.username}');
-      
     } on NetworkExceptions catch (e) {
       final errorMessage = NetworkExceptions.getErrorMessage(e);
       AppLogger.error('Login failed with network error: $errorMessage');
@@ -98,18 +96,18 @@ class AuthNotifier extends StateNotifier<AuthState> {
       );
 
       final user = await _authRepository.register(registerRequest);
-      
+
       // Auto-login after registration
       await login(username, password);
-      
+
       AppLogger.info('Registration successful for user: ${user.username}');
-      
     } on NetworkExceptions catch (e) {
       final errorMessage = NetworkExceptions.getErrorMessage(e);
       AppLogger.error('Registration failed with network error: $errorMessage');
       state = AuthState.error(errorMessage);
     } catch (e, stackTrace) {
-      AppLogger.error('Registration failed with unexpected error', e, stackTrace);
+      AppLogger.error(
+          'Registration failed with unexpected error', e, stackTrace);
       state = const AuthState.error('Erro inesperado durante o cadastro');
     }
   }
@@ -117,20 +115,19 @@ class AuthNotifier extends StateNotifier<AuthState> {
   Future<void> logout() async {
     try {
       AppLogger.info('Logging out user');
-      
+
       // Try to logout from server (optional, don't fail if it doesn't work)
       try {
         await _authRepository.logout();
       } catch (e) {
         AppLogger.warning('Server logout failed: $e');
       }
-      
+
       // Clear local auth data
       await _clearAuthData();
-      
+
       state = const AuthState.unauthenticated();
       AppLogger.info('Logout completed');
-      
     } catch (e, stackTrace) {
       AppLogger.error('Error during logout', e, stackTrace);
       // Even if there's an error, clear local data and update state
@@ -142,20 +139,19 @@ class AuthNotifier extends StateNotifier<AuthState> {
   Future<void> refreshToken() async {
     try {
       AppLogger.info('Refreshing authentication token');
-      
+
       final refreshToken = await SecureStorage.getRefreshToken();
       if (refreshToken == null) {
         throw Exception('No refresh token available');
       }
 
       final authTokens = await _authRepository.refreshToken(refreshToken);
-      
+
       // Save new tokens
       await _saveAuthData(authTokens);
-      
+
       state = AuthState.authenticated(authTokens.user);
       AppLogger.info('Token refresh successful');
-      
     } catch (e, stackTrace) {
       AppLogger.error('Token refresh failed', e, stackTrace);
       await _clearAuthData();
@@ -175,19 +171,18 @@ class AuthNotifier extends StateNotifier<AuthState> {
       }
 
       state = const AuthState.loading();
-      
+
       final updatedUser = await _authRepository.updateProfile(
         firstName: firstName,
         lastName: lastName,
         email: email,
       );
-      
+
       // Update stored user data
       await _saveUserData(updatedUser);
-      
+
       state = AuthState.authenticated(updatedUser);
       AppLogger.info('Profile updated successfully');
-      
     } catch (e, stackTrace) {
       AppLogger.error('Profile update failed', e, stackTrace);
       // Restore previous state on error
@@ -201,20 +196,20 @@ class AuthNotifier extends StateNotifier<AuthState> {
   }) async {
     try {
       AppLogger.info('Attempting password change');
-      
+
       await _authRepository.changePassword(
         currentPassword: currentPassword,
         newPassword: newPassword,
       );
-      
+
       AppLogger.info('Password changed successfully');
-      
     } on NetworkExceptions catch (e) {
       final errorMessage = NetworkExceptions.getErrorMessage(e);
       AppLogger.error('Password change failed: $errorMessage');
       throw Exception(errorMessage);
     } catch (e, stackTrace) {
-      AppLogger.error('Password change failed with unexpected error', e, stackTrace);
+      AppLogger.error(
+          'Password change failed with unexpected error', e, stackTrace);
       throw Exception('Erro inesperado ao alterar senha');
     }
   }
@@ -251,7 +246,7 @@ class AuthNotifier extends StateNotifier<AuthState> {
   bool get isAuthenticated => state is _Authenticated;
   bool get isLoading => state is _Loading;
   bool get hasError => state is _Error;
-  
+
   String? get errorMessage {
     final currentState = state;
     return currentState is _Error ? currentState.message : null;
