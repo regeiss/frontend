@@ -2,76 +2,58 @@
 targets:
   $default:
     builders:
+      # Drift database code generation - APENAS OPÇÕES VÁLIDAS
+      drift_dev:
+        enabled: true
+        options:
+          store_date_time_values_as_text: true
+          skip_verification_code: false
+          use_column_name_as_json_key_when_defined_in_moor_file: true
+          # Removido: generate_data_classes (não existe)
+        generate_for:
+          - lib/core/database/**/*.dart
+
+      # Freezed code generation
+      freezed:
+        enabled: true
+        options:
+          copy_with: true
+          when: true
+          map: true
+          equal: true
+          to_string: true
+        generate_for:
+          - lib/**/*.dart
+
       # JSON annotation code generation
       json_serializable:
+        enabled: true
         options:
-          # Creates a single *.g.dart file
           any_map: false
           checked: true
           create_factory: true
           create_to_json: true
           disallow_unrecognized_keys: false
           explicit_to_json: false
-          field_rename: none
+          field_rename: snake
           generic_argument_factories: false
           ignore_unannotated: false
           include_if_null: true
         generate_for:
           - lib/**/*.dart
 
-      # Freezed code generation
-      freezed:
-        options:
-          # Generate copyWith methods
-          copy_with: true
-          # Generate when methods
-          when: true
-          # Generate map methods
-          map: true
-          # Generate equality operators
-          equal: true
-          # Generate toString methods
-          to_string: true
-        generate_for:
-          - lib/**/*.dart
+# REMOVIDO: envied_generator (não é um builder reconhecido)
+# Ele funciona através de anotações, não precisa de configuração aqui
 
-      # Drift database code generation
-      drift_dev:
-        options:
-          # Store date times as text
-          store_date_time_values_as_text: true
-          # Generate connect constructors
-          #generate_connect_constructor: true
-          # Enable data classes
-          #generate_data_classes: true
-          # Skip verification code
-          #skip_verification_code: false
-          # Use column name as json key
-          #use_column_name_as_json_key_when_defined_in_moor_file: true
-        generate_for:
-          - lib/core/database/**/*.dart
-
-      # Envied environment code generation
-      envied_generator:
-        generate_for:
-          - lib/core/config/env.dart
-
+# Global options simplificadas
 global_options:
-  # JSON annotation global settings
   json_serializable:
     options:
-      any_map: false
+      field_rename: snake
       checked: true
       create_factory: true
       create_to_json: true
-      disallow_unrecognized_keys: false
-      explicit_to_json: false
-      field_rename: snake
-      generic_argument_factories: false
-      ignore_unannotated: false
-      include_if_null: true
 
-  # Freezed global settings
   freezed:
     options:
       copy_with: true

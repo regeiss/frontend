@@ -286,7 +286,7 @@ class DioClient extends ChangeNotifier {
   // ============================================================================
 
   String _getErrorMessage(DioException error) {
-    String message = 'Erro inesperado';
+    var message = 'Erro inesperado';
 
     if (error.response?.data is Map) {
       final errorData = error.response!.data as Map<String, dynamic>;
@@ -345,9 +345,7 @@ class DioClient extends ChangeNotifier {
     return message;
   }
 
-  Future<ApiResponse<Map<String, dynamic>>> healthCheck() async {
-    return await get<Map<String, dynamic>>('/health/');
-  }
+  Future<ApiResponse<Map<String, dynamic>>> healthCheck() async => get<Map<String, dynamic>>('/health/');
 
   // ============================================================================
   // DISPOSE
@@ -365,15 +363,10 @@ class DioClient extends ChangeNotifier {
 // ============================================================================
 
 class ApiResponse<T> {
-  final bool success;
-  final T? data;
-  final String message;
-  final int? statusCode;
 
   ApiResponse._({
     required this.success,
-    this.data,
-    required this.message,
+    required this.message, this.data,
     this.statusCode,
   });
 
@@ -381,23 +374,23 @@ class ApiResponse<T> {
     T? data,
     String message = 'Operação realizada com sucesso',
     int? statusCode,
-  }) {
-    return ApiResponse._(
+  }) => ApiResponse._(
       success: true,
       data: data,
       message: message,
       statusCode: statusCode,
     );
-  }
 
   factory ApiResponse.error(
     String message, {
     int? statusCode,
-  }) {
-    return ApiResponse._(
+  }) => ApiResponse._(
       success: false,
       message: message,
       statusCode: statusCode,
     );
-  }
+  final bool success;
+  final T? data;
+  final String message;
+  final int? statusCode;
 }
