@@ -357,5 +357,104 @@ Este projeto está sob a licença MIT. Veja o arquivo [LICENSE](LICENSE) para de
 - [ ] Micro-frontends
 
 ---
+# Database Architecture - Multi-Platform
 
-**Desenvolvido com ❤️ usando Flutter**
+Este sistema de banco de dados foi projetado para funcionar tanto na **web** quanto em **mobile/desktop**, usando **imports condicionais** para evitar problemas de compatibilidade.
+
+## 🏗️ Estrutura
+
+```
+lib/core/database/
+├── connection/
+│   ├── database_connection.dart          # Factory principal
+│   ├── database_connection_native.dart   # SQLite nativo (mobile/desktop)
+│   └── database_connection_web.dart      # IndexedDB (web)
+├── tables/
+│   ├── cache_table.dart
+│   ├── demanda_table.dart
+│   ├── membro_table.dart
+│   └── responsavel_table.dart
+├── database.dart                         # Database principal
+├── database.g.dart                       # Código gerado pelo Drift
+└── web_database_helper.dart              # Utilitários web
+```
+
+## 🔄 Como Funciona
+
+### **Imports Condicionais**
+```dart
+import 'database_connection_web.dart'
+    if (dart.library.io) 'database_connection_native.dart';
+```
+
+- **Web**: Usa `database_connection_web.dart` (IndexedDB)
+- **Mobile/Desktop**: Usa `database_connection_native.dart` (SQLite)
+
+### **Plataformas Suportadas**
+
+#### **🌐 Web (IndexedDB)**
+- ✅ Drift WebDatabase
+- ✅ Armazenamento no navegador
+- ❌ Foreign keys limitadas
+- ❌ Sem PRAGMA statements
+- ✅ Sincronização automática
+
+#### **📱 Mobile/Desktop (SQLite)**
+- ✅ SQLite nativo completo
+- ✅ Foreign keys habilitadas
+- ✅ WAL mode para performance
+- ✅ PRAGMAs de otimização
+- ✅ Backup e migração completa
+
+## 🚀 Vantagens
+
+1. **Zero Conflitos**: Código SQLite nativo nunca é compilado para web
+2. **Performance Otimizada**: Cada plataforma usa sua implementação ideal
+3. **Código Limpo**: Separação clara de responsabilidades
+4. **Manutenibilidade**: Fácil de adicionar novas plataformas
+5. **Compatibilidade**: Funciona em todas as plataformas Flutter
+
+## 📝 Uso
+
+```dart
+// Inicializar database
+final db = AppDatabase.instance;
+await db.initialize();
+
+// Usar normalmente - a implementação é escolhida automaticamente
+final responsaveis = await db.getAllResponsaveis();
+```
+
+## 🔧 Configurações
+
+### **Web**
+- Usa IndexedDB do navegador
+- Nome: `cadastro_unificado_web_db`
+- Sem configurações PRAGMA
+
+### **Mobile/Desktop**
+- SQLite nativo otimizado
+- Arquivo: `cadastro_unificado.db`
+- WAL mode habilitado
+- Foreign keys habilitadas
+- Cache otimizado (10000 páginas)
+
+## 🐛 Troubleshooting
+
+### **Erro de Compilação Web**
+Se você ver erros como "Only JS interop members may be 'external'":
+1. Certifique-se de não importar `drift/native.dart` diretamente na web
+2. Use sempre a factory `getDatabaseConnection()`
+3. Verifique se não há imports diretos de SQLite em código shared
+
+### **Performance**
+- **Web**: IndexedDB pode ser mais lenta, mas é a única opção
+- **Mobile**: SQLite nativo é otimizado com WAL mode e cache
+
+### **Debugging**
+```dart
+// Logs automáticos em modo debug
+if (kDebugMode) {
+  print('🏗️ Database Platform: ${kIsWeb ? 'Web' : 'Native'}');
+}
+```

@@ -80,7 +80,6 @@ app.*.map.json
 coverage/
 
 # Web related
-lib/generated_plugin_registrant.dart
 
 # Firebase
 **/ios/Runner/GoogleService-Info.plist
@@ -94,10 +93,10 @@ firebase_options.dart
 .env.staging
 
 # Generated files
-*.g.dart
-*.freezed.dart
-*.config.dart
-*.mocks.dart
+# *.g.dart
+# *.freezed.dart
+# *.config.dart
+# *.mocks.dart
 
 # Database
 *.db
@@ -175,6 +174,3 @@ lib/l10n/
 *.arb
 
 # Code generation output
-lib/**/*.g.dart
-lib/**/*.freezed.dart
-lib/**/*.config.dart

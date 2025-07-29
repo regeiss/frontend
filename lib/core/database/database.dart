@@ -1,11 +1,8 @@
-import 'dart:io';
-
 import 'package:drift/drift.dart';
-import 'package:drift/native.dart';
-import 'package:path/path.dart' as p;
-import 'package:path_provider/path_provider.dart';
+import 'package:flutter/foundation.dart';
 
 import '../config/logging/app_logger.dart';
+import 'connection/database_connection.dart';
 
 import 'tables/cache_table.dart';
 import 'tables/demanda_table.dart';
@@ -21,7 +18,7 @@ part 'database.g.dart';
   CacheTable,
 ])
 class AppDatabase extends _$AppDatabase {
-  AppDatabase._() : super(_openConnection());
+  AppDatabase._() : super(getDatabaseConnection());
 
   static AppDatabase? _instance;
   static AppDatabase get instance {
@@ -34,7 +31,7 @@ class AppDatabase extends _$AppDatabase {
 
   Future<void> initialize() async {
     try {
-      // Test database connection
+      // Testa conexão com banco
       await customSelect('SELECT 1').get();
       AppLogger.info('Database initialized successfully');
     } catch (e, stackTrace) {
@@ -51,11 +48,11 @@ class AppDatabase extends _$AppDatabase {
         },
         onUpgrade: (m, from, to) async {
           AppLogger.info('Database migrated from version $from to $to');
-          // Add migration logic here when needed
+          // Adicionar lógica de migração aqui quando necessário
         },
         beforeOpen: (details) async {
-          // Enable foreign keys
-          await customStatement('PRAGMA foreign_keys = ON');
+          // Configurações específicas da plataforma
+          await configureDatabaseForPlatform(this);
 
           if (details.wasCreated) {
             AppLogger.info('Database was created for the first time');
@@ -63,7 +60,7 @@ class AppDatabase extends _$AppDatabase {
         },
       );
 
-  // Responsavel operations
+  // Operações Responsavel
   Future<List<ResponsavelTableData>> getAllResponsaveis() async =>
       await select(responsavelTable).get();
 
@@ -80,7 +77,7 @@ class AppDatabase extends _$AppDatabase {
   Future<int> deleteResponsavel(String cpf) async =>
       await (delete(responsavelTable)..where((t) => t.cpf.equals(cpf))).go();
 
-  // Membro operations
+  // Operações Membro
   Future<List<MembroTableData>> getMembrosDoResponsavel(
           String cpfResponsavel) async =>
       await (select(membroTable)
@@ -90,7 +87,7 @@ class AppDatabase extends _$AppDatabase {
   Future<int> insertMembro(MembroTableCompanion membro) async =>
       await into(membroTable).insert(membro);
 
-  // Demanda operations
+  // Operações Demanda
   Future<List<DemandaTableData>> getDemandasDoResponsavel(
           String cpfResponsavel) async =>
       await (select(demandaTable)
@@ -100,7 +97,7 @@ class AppDatabase extends _$AppDatabase {
   Future<int> insertDemanda(DemandaTableCompanion demanda) async =>
       await into(demandaTable).insert(demanda);
 
-  // Cache operations
+  // Operações Cache
   Future<void> saveToCache(String key, String data,
       {DateTime? expiresAt}) async {
     await into(cacheTable).insertOnConflictUpdate(
@@ -119,7 +116,7 @@ class AppDatabase extends _$AppDatabase {
 
     if (result == null) return null;
 
-    // Check if expired
+    // Verifica se expirou
     if (result.expiresAt != null &&
         result.expiresAt!.isBefore(DateTime.now())) {
       await (delete(cacheTable)..where((t) => t.key.equals(key))).go();
@@ -141,7 +138,7 @@ class AppDatabase extends _$AppDatabase {
     await delete(cacheTable).go();
   }
 
-  // Clear all data
+  // Limpar todos os dados
   Future<void> clearAllData() async {
     await transaction(() async {
       await delete(responsavelTable).go();
@@ -152,10 +149,3 @@ class AppDatabase extends _$AppDatabase {
     AppLogger.info('All database data cleared');
   }
 }
-
-LazyDatabase _openConnection() => LazyDatabase(() async {
-      final dbFolder = await getApplicationDocumentsDirectory();
-      final file = File(p.join(dbFolder.path, 'cadastro_unificado.db'));
-
-      return NativeDatabase.createInBackground(file, logStatements: true);
-    });
