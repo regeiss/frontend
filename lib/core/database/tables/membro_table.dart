@@ -12,9 +12,11 @@ class MembroTable extends Table {
   DateTimeColumn get createdAt => dateTime().withDefault(currentDateAndTime)();
   DateTimeColumn get updatedAt => dateTime().withDefault(currentDateAndTime)();
   BoolColumn get syncPending => boolean().withDefault(const Constant(false))();
-  BoolColumn get deletePending =>
-      boolean().withDefault(const Constant(false))();
+  BoolColumn get deletePending => boolean().withDefault(const Constant(false))();
 
   @override
   Set<Column> get primaryKey => {cpf};
+
+  @override
+  String get tableName => 'membro'; // Nome da tabela para corresponder ao Django
 }

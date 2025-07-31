@@ -12,7 +12,8 @@ targets:
           # Removido: generate_data_classes (não existe)
         generate_for:
           - lib/core/database/**/*.dart
-
+          - lib/core/database/tables/**/*.dart
+          - lib/core/database/database.dart
       # Freezed code generation
       freezed:
         enabled: true
@@ -24,6 +25,7 @@ targets:
           to_string: true
         generate_for:
           - lib/**/*.dart
+          - lib/features/auth/presentation/domain/entities/user.dart
 
       # JSON annotation code generation
       json_serializable:

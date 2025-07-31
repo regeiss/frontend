@@ -17,9 +17,9 @@ mixin _$User {
   int get id;
   String get username;
   String get email;
-  bool get isStaff;
-  bool get isActive;
-  DateTime get dateJoined;
+  bool get isStaff; // ← Quebra de linha aqui
+  bool get isActive; // ← Quebra de linha aqui
+  DateTime get dateJoined; // ← Quebra de linha aqui
   String? get firstName;
   String? get lastName;
 
@@ -347,10 +347,13 @@ class _User implements User {
   final String email;
   @override
   final bool isStaff;
+// ← Quebra de linha aqui
   @override
   final bool isActive;
+// ← Quebra de linha aqui
   @override
   final DateTime dateJoined;
+// ← Quebra de linha aqui
   @override
   final String? firstName;
   @override
@@ -731,11 +734,12 @@ extension AuthTokensPatterns on AuthTokens {
 
 /// @nodoc
 @JsonSerializable()
-class _AuthTokens implements AuthTokens {
+class _AuthTokens extends AuthTokens {
   const _AuthTokens(
       {required this.accessToken,
       required this.refreshToken,
-      required this.user});
+      required this.user})
+      : super._();
   factory _AuthTokens.fromJson(Map<String, dynamic> json) =>
       _$AuthTokensFromJson(json);
 

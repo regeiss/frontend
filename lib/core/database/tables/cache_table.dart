@@ -9,4 +9,7 @@ class CacheTable extends Table {
 
   @override
   Set<Column> get primaryKey => {key};
+
+  @override
+  String get tableName => 'cache'; // Nome da tabela
 }

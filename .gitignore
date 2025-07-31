@@ -92,12 +92,6 @@ firebase_options.dart
 .env.production
 .env.staging
 
-# Generated files
-# *.g.dart
-# *.freezed.dart
-# *.config.dart
-# *.mocks.dart
-
 # Database
 *.db
 *.sqlite

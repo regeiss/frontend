@@ -11,9 +11,8 @@ class DemandaTable extends Table {
   DateTimeColumn get data => dateTime().withDefault(currentDateAndTime)();
   TextColumn get evolucao => text().withLength(max: 500).nullable()();
 
-  // Campos específicos (JSON ou campos separados dependendo da necessidade)
-  TextColumn get dadosEspecificos =>
-      text().nullable()(); // JSON string para dados específicos de cada tipo
+  // Campos específicos (JSON string para dados específicos de cada tipo)
+  TextColumn get dadosEspecificos => text().nullable()();
 
   // Local database fields
   DateTimeColumn get createdAt => dateTime().withDefault(currentDateAndTime)();
@@ -21,4 +20,7 @@ class DemandaTable extends Table {
   BoolColumn get syncPending => boolean().withDefault(const Constant(false))();
   BoolColumn get deletePending =>
       boolean().withDefault(const Constant(false))();
+
+  @override
+  String get tableName => 'demanda'; // Nome da tabela
 }

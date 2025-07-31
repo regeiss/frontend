@@ -9,9 +9,9 @@ class User with _$User {
     required int id,
     required String username,
     required String email,
-    required bool isStaff,
-    required bool isActive,
-    required DateTime dateJoined,
+    required bool isStaff, // ← Quebra de linha aqui
+    required bool isActive, // ← Quebra de linha aqui
+    required DateTime dateJoined, // ← Quebra de linha aqui
     String? firstName,
     String? lastName,
   }) = _User;
@@ -21,6 +21,8 @@ class User with _$User {
 
 @freezed
 class AuthTokens with _$AuthTokens {
+  const AuthTokens._(); // Construtor privado para extensões
+
   const factory AuthTokens({
     required String accessToken,
     required String refreshToken,
@@ -40,6 +42,8 @@ class LoginRequest with _$LoginRequest {
 
   factory LoginRequest.fromJson(Map<String, dynamic> json) =>
       _$LoginRequestFromJson(json);
+
+  // REMOVIDO: Override incorreto do toJson() que estava causando conflito
 }
 
 @freezed
