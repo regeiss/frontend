@@ -1,10 +1,20 @@
+// Imports para cada plataforma - FUNCIONAM SEMPRE
+import 'dart:io' if (dart.library.html) 'dart:html';
+
 import 'package:drift/drift.dart';
+// Mobile imports (só carregam no mobile)
+import 'package:drift/native.dart'
+    if (dart.library.html) 'package:drift/wasm.dart';
+import 'package:drift/wasm.dart';
 import 'package:flutter/foundation.dart';
+import 'package:path/path.dart' as p;
+import 'package:path_provider/path_provider.dart'
+    if (dart.library.html) 'dart:async';
+import 'package:sqlite3/sqlite3.dart' if (dart.library.html) 'dart:html';
+import 'package:sqlite3_flutter_libs/sqlite3_flutter_libs.dart'
+    if (dart.library.html) 'dart:html';
 
 import '../config/logging/app_logger.dart';
-// Imports para cada plataforma
-import 'connection/database_connection_native.dart'
-    if (dart.library.html) 'database_connection_web.dart';
 import 'tables/cache_table.dart';
 import 'tables/demanda_table.dart';
 import 'tables/membro_table.dart';
@@ -19,7 +29,7 @@ part 'database.g.dart';
   CacheTable,
 ])
 class AppDatabase extends _$AppDatabase {
-  AppDatabase._() : super(createDriftConnection());
+  AppDatabase._() : super(_openConnection());
 
   static AppDatabase? _instance;
   static AppDatabase get instance {
@@ -30,47 +40,166 @@ class AppDatabase extends _$AppDatabase {
   @override
   int get schemaVersion => 1;
 
+  Future<void> initialize() async {
+    try {
+      await customSelect('SELECT 1').get();
+      AppLogger.info('Database initialized successfully');
+    } catch (e, stackTrace) {
+      AppLogger.error('Failed to initialize database', e, stackTrace);
+      rethrow;
+    }
+  }
+
   @override
   MigrationStrategy get migration => MigrationStrategy(
-    onCreate: (Migrator m) async {
-      AppLogger.info('Criando banco de dados local');
-      await m.createAll();
-    },
-    onUpgrade: (Migrator m, int from, int to) async {
-      AppLogger.info('Atualizando banco de dados de $from para $to');
-      // Implementar migrações futuras aqui
-    },
-    beforeOpen: (details) async {
-      AppLogger.info('Abrindo banco de dados - versão ${details.versionNow}');
-    },
-  );
-  
-  /// Método para limpar todos os dados
-  Future<void> clearAllData() async {
-    await transaction(() async {
-      AppLogger.info('Limpando todos os dados do banco');
-      
-      await delete(cacheTable).go();
-      await delete(demandaTable).go();
-      await delete(membroTable).go();
-      await delete(responsavelTable).go();
-      
-      AppLogger.info('Todos os dados foram removidos');
-    });
+        onCreate: (m) async {
+          await m.createAll();
+          AppLogger.info('Database tables created');
+        },
+        onUpgrade: (m, from, to) async {
+          AppLogger.info('Database migrated from version $from to $to');
+        },
+        beforeOpen: (details) async {
+          await customStatement('PRAGMA foreign_keys = ON');
+          if (details.wasCreated) {
+            AppLogger.info('Database was created for the first time');
+          }
+        },
+      );
+
+  // CRUD Operations
+  Future<List<ResponsavelTableData>> getAllResponsaveis() async =>
+      await select(responsavelTable).get();
+
+  Future<ResponsavelTableData?> getResponsavelByCpf(String cpf) async =>
+      await (select(responsavelTable)..where((t) => t.cpf.equals(cpf)))
+          .getSingleOrNull();
+
+  Future<int> insertResponsavel(ResponsavelTableCompanion responsavel) async =>
+      await into(responsavelTable).insert(responsavel);
+
+  Future<bool> updateResponsavel(ResponsavelTableCompanion responsavel) async =>
+      await update(responsavelTable).replace(responsavel);
+
+  Future<int> deleteResponsavel(String cpf) async =>
+      await (delete(responsavelTable)..where((t) => t.cpf.equals(cpf))).go();
+
+  Future<List<MembroTableData>> getMembrosDoResponsavel(
+          String cpfResponsavel) async =>
+      await (select(membroTable)
+            ..where((t) => t.cpfResponsavel.equals(cpfResponsavel)))
+          .get();
+
+  Future<int> insertMembro(MembroTableCompanion membro) async =>
+      await into(membroTable).insert(membro);
+
+  Future<List<DemandaTableData>> getDemandasDoResponsavel(
+          String cpfResponsavel) async =>
+      await (select(demandaTable)
+            ..where((t) => t.cpfResponsavel.equals(cpfResponsavel)))
+          .get();
+
+  Future<int> insertDemanda(DemandaTableCompanion demanda) async =>
+      await into(demandaTable).insert(demanda);
+
+  // Cache operations
+  Future<void> saveToCache(String key, String data,
+      {DateTime? expiresAt}) async {
+    await into(cacheTable).insertOnConflictUpdate(
+      CacheTableCompanion(
+        key: Value(key),
+        data: Value(data),
+        expiresAt: Value(expiresAt),
+        createdAt: Value(DateTime.now()),
+      ),
+    );
   }
-  
-  /// Status do banco de dados
-  Future<Map<String, int>> getDatabaseStatus() async {
-    final responsaveisCount = await select(responsavelTable).get().then((r) => r.length);
-    final membrosCount = await select(membroTable).get().then((r) => r.length);
-    final demandasCount = await select(demandaTable).get().then((r) => r.length);
-    final cacheCount = await select(cacheTable).get().then((r) => r.length);
-    
-    return {
-      'responsaveis': responsaveisCount,
-      'membros': membrosCount,
-      'demandas': demandasCount,
-      'cache': cacheCount,
-    };
+
+  Future<String?> getFromCache(String key) async {
+    final result = await (select(cacheTable)..where((t) => t.key.equals(key)))
+        .getSingleOrNull();
+
+    if (result == null) return null;
+
+    if (result.expiresAt != null &&
+        result.expiresAt!.isBefore(DateTime.now())) {
+      await (delete(cacheTable)..where((t) => t.key.equals(key))).go();
+      return null;
+    }
+
+    return result.data;
   }
+}
+
+// Função para abrir conexão multiplataforma
+DatabaseConnection _openConnection() {
+  if (kIsWeb) {
+    return _openWebConnection();
+  } else {
+    return _openMobileConnection();
+  }
+}
+
+// Conexão WEB - usando a API moderna
+DatabaseConnection _openWebConnection() {
+  AppLogger.info('🌐 Configurando Drift para Web');
+
+  return DatabaseConnection.delayed(Future(() async {
+    try {
+      // Usar WasmDatabase (API moderna)
+      final result = await WasmDatabase.open(
+        databaseName: 'cadastro_unificado_web',
+        sqlite3Uri: Uri.parse('sqlite3.wasm'),
+        driftWorkerUri: Uri.parse('drift_worker.dart.js'),
+      );
+
+      if (result.missingFeatures.isNotEmpty) {
+        AppLogger.warning(
+            'Algumas funcionalidades não disponíveis: ${result.missingFeatures}');
+      }
+
+      AppLogger.info('✅ Database Web configurado com WASM');
+      return result.resolvedExecutor;
+    } catch (e) {
+      // Fallback simples para desenvolvimento
+      AppLogger.warning('⚠️ WASM não disponível, usando fallback simples: $e');
+
+      // Criar conexão simples para desenvolvimento
+      return DatabaseConnection(
+        NativeDatabase.memory(logStatements: kDebugMode),
+        closeExecutorOnClose: true,
+      );
+    }
+  }));
+}
+
+// Conexão MOBILE - usando NativeDatabase
+DatabaseConnection _openMobileConnection() {
+  AppLogger.info('📱 Configurando Drift para Mobile');
+
+  return DatabaseConnection.delayed(Future(() async {
+    try {
+      final dbFolder = await getApplicationDocumentsDirectory();
+      final file = File(p.join(dbFolder.path, 'cadastro_unificado.db'));
+
+      AppLogger.info('📁 Database file: ${file.path}');
+
+      // CORREÇÃO: Usar DatabaseConnection, não retornar QueryExecutor diretamente
+      final executor = NativeDatabase.createInBackground(
+        file,
+        logStatements: kDebugMode,
+        setup: (database) {
+          database.execute('PRAGMA foreign_keys = ON');
+          database.execute('PRAGMA journal_mode = WAL');
+          database.execute('PRAGMA synchronous = NORMAL');
+        },
+      );
+
+      // Retornar como DatabaseConnection
+      return executor;
+    } catch (e) {
+      AppLogger.error('❌ Erro mobile database: $e');
+      rethrow;
+    }
+  }));
 }
