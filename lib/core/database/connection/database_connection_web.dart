@@ -1,19 +1,38 @@
-// database_connection_web.dart - APENAS para web
+// Arquivo: lib/core/database/database_connection_web.dart  
+// Este arquivo é usado para Web (Chrome/Firefox/Safari)
+
 import 'package:drift/drift.dart';
 import 'package:drift/web.dart';
-import 'package:flutter/foundation.dart';
+import '../../config/logging/app_logger.dart';
 
-/// Conexão web usando IndexedDB
-LazyDatabase createDatabaseConnection() => LazyDatabase(() async => WebDatabase('cadastro_unificado_web_db'));
-
-/// Configurações específicas para web
-Future<void> configureSqlite(GeneratedDatabase db) async {
-  // Configurações básicas para web
-  // Foreign keys não são totalmente suportadas no IndexedDB
+/// Cria conexão para plataforma web (IndexedDB)
+DatabaseConnection createDriftConnection() {
+  AppLogger.info('Configurando Drift para Web (IndexedDB)');
   
-  if (kDebugMode) {
-    print('🌐 Database web configurado (IndexedDB)');
-  }
-  
-  // Não executa PRAGMAs na web pois não são suportados
+  return DatabaseConnection.delayed(Future(() async {
+    try {
+      // Tentar usar IndexedDB primeiro
+      final storage = await DriftWebStorage.indexedDbIfSupported('cadastro_unificado_web');
+      final db = DriftWebDatabase.withStorage(storage);
+      
+      AppLogger.info('Web database configurado com IndexedDB');
+      return db;
+      
+    } catch (e) {
+      // Fallback para localStorage se IndexedDB falhar
+      AppLogger.warning('IndexedDB não disponível, usando localStorage: $e');
+      
+      try {
+        final storage = DriftWebStorage.volatile();
+        final db = DriftWebDatabase.withStorage(storage);
+        
+        AppLogger.info('Web database configurado com localStorage');
+        return db;
+        
+      } catch (e2) {
+        AppLogger.error('Erro fatal ao configurar web database: $e2');
+        rethrow;
+      }
+    }
+  }));
 }

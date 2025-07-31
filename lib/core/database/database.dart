@@ -1,15 +1,10 @@
-// Para mobile
-import 'dart:io' show File;
-
 import 'package:drift/drift.dart';
-import 'package:drift/native.dart';
-// Para web
-import 'package:drift/web.dart';
 import 'package:flutter/foundation.dart';
-import 'package:path/path.dart' as p;
-import 'package:path_provider/path_provider.dart';
 
 import '../config/logging/app_logger.dart';
+// Imports para cada plataforma
+import 'connection/database_connection_native.dart'
+    if (dart.library.html) 'database_connection_web.dart';
 import 'tables/cache_table.dart';
 import 'tables/demanda_table.dart';
 import 'tables/membro_table.dart';
@@ -24,7 +19,7 @@ part 'database.g.dart';
   CacheTable,
 ])
 class AppDatabase extends _$AppDatabase {
-  AppDatabase._() : super(_openConnection());
+  AppDatabase._() : super(createDriftConnection());
 
   static AppDatabase? _instance;
   static AppDatabase get instance {
@@ -37,11 +32,11 @@ class AppDatabase extends _$AppDatabase {
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
-    onCreate: (m) async {
+    onCreate: (Migrator m) async {
       AppLogger.info('Criando banco de dados local');
       await m.createAll();
     },
-    onUpgrade: (m, from, to) async {
+    onUpgrade: (Migrator m, int from, int to) async {
       AppLogger.info('Atualizando banco de dados de $from para $to');
       // Implementar migrações futuras aqui
     },
@@ -78,66 +73,4 @@ class AppDatabase extends _$AppDatabase {
       'cache': cacheCount,
     };
   }
-}
-
-// Função para abrir conexão
-DatabaseConnection _openConnection() {
-  if (kIsWeb) {
-    return _openWebConnection();
-  } else {
-    return _openMobileConnection();
-  }
-}
-
-// Conexão Web
-DatabaseConnection _openWebConnection() {
-  AppLogger.info('Configurando Drift para Web (IndexedDB)');
-  
-  return DatabaseConnection.delayed(Future(() async {
-    try {
-      // Tentar usar IndexedDB primeiro
-      final storage = await DriftWebStorage.indexedDbIfSupported('cadastro_unificado_web');
-      final db = DriftWebDatabase.withStorage(storage);
-      
-      AppLogger.info('Web database configurado com IndexedDB');
-      return db;
-      
-    } catch (e) {
-      // Fallback para localStorage
-      AppLogger.warning('IndexedDB não disponível, usando localStorage: $e');
-      
-      final storage = DriftWebStorage.volatile();
-      final db = DriftWebDatabase.withStorage(storage);
-      
-      return db;
-    }
-  }));
-}
-
-// Conexão Mobile  
-DatabaseConnection _openMobileConnection() {
-  AppLogger.info('Configurando Drift para Mobile (SQLite)');
-  
-  return DatabaseConnection.delayed(Future(() async {
-    try {
-      final dbFolder = await getApplicationDocumentsDirectory();
-      final file = File(p.join(dbFolder.path, 'cadastro_unificado.db'));
-      
-      AppLogger.info('Mobile database: ${file.path}');
-      
-      return NativeDatabase.createInBackground(
-        file,
-        logStatements: kDebugMode,
-        setup: (database) {
-          // Configurações de performance
-          database.execute('PRAGMA foreign_keys = ON');
-          database.execute('PRAGMA journal_mode = WAL');
-        },
-      );
-      
-    } catch (e) {
-      AppLogger.error('Erro ao configurar mobile database: $e');
-      rethrow;
-    }
-  }));
 }

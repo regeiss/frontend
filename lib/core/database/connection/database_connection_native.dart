@@ -1,37 +1,40 @@
-// database_connection_native.dart - APENAS para mobile/desktop
-import 'dart:io';
 
+// ignore_for_file: cascade_invocations
+
+import 'dart:io';
 import 'package:drift/drift.dart';
 import 'package:drift/native.dart';
 import 'package:flutter/foundation.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 
-/// Conexão nativa para mobile/desktop
-LazyDatabase createDatabaseConnection() => LazyDatabase(() async {
-    final dbFolder = await getApplicationDocumentsDirectory();
-    final file = File(p.join(dbFolder.path, 'cadastro_unificado.db'));
-    
-    return NativeDatabase.createInBackground(
-      file,
-      logStatements: kDebugMode,
-    );
-  });
+import '../../config/logging/app_logger.dart';
 
-/// Configurações específicas para plataformas nativas
-Future<void> configureSqlite(GeneratedDatabase db) async {
-  // Habilita foreign keys
-  await db.customStatement('PRAGMA foreign_keys = ON');
+/// Cria conexão para plataformas nativas (Android/iOS)
+DatabaseConnection createDriftConnection() {
+  AppLogger.info('Configurando Drift para Mobile (SQLite)');
   
-  // Configura WAL mode para melhor performance
-  await db.customStatement('PRAGMA journal_mode = WAL');
-  
-  // Otimizações de performance
-  await db.customStatement('PRAGMA synchronous = NORMAL');
-  await db.customStatement('PRAGMA cache_size = 10000');
-  await db.customStatement('PRAGMA temp_store = MEMORY');
-  
-  if (kDebugMode) {
-    print('🏗️ SQLite nativo configurado com otimizações');
-  }
+  return DatabaseConnection.delayed(Future(() async {
+    try {
+      final dbFolder = await getApplicationDocumentsDirectory();
+      final file = File(p.join(dbFolder.path, 'cadastro_unificado.db'));
+      
+      AppLogger.info('Mobile database: ${file.path}');
+      
+      return NativeDatabase.createInBackground(
+        file,
+        logStatements: kDebugMode,
+        setup: (database) {
+          // Configurações de performance
+          database.execute('PRAGMA foreign_keys = ON');
+          database.execute('PRAGMA journal_mode = WAL');
+          database.execute('PRAGMA synchronous = NORMAL');
+        },
+      );
+      
+    } catch (e) {
+      AppLogger.error('Erro ao configurar mobile database: $e');
+      rethrow;
+    }
+  }));
 }
