@@ -6,12 +6,11 @@ part of 'responsavel.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-_$ResponsavelImpl _$$ResponsavelImplFromJson(Map<String, dynamic> json) =>
-    $checkedCreate(
-      r'_$ResponsavelImpl',
+_Responsavel _$ResponsavelFromJson(Map<String, dynamic> json) => $checkedCreate(
+      '_Responsavel',
       json,
       ($checkedConvert) {
-        final val = _$ResponsavelImpl(
+        final val = _Responsavel(
           cpf: $checkedConvert('cpf', (v) => v as String),
           nome: $checkedConvert('nome', (v) => v as String),
           cep: $checkedConvert('cep', (v) => v as String),
@@ -37,7 +36,7 @@ _$ResponsavelImpl _$$ResponsavelImplFromJson(Map<String, dynamic> json) =>
       },
     );
 
-Map<String, dynamic> _$$ResponsavelImplToJson(_$ResponsavelImpl instance) =>
+Map<String, dynamic> _$ResponsavelToJson(_Responsavel instance) =>
     <String, dynamic>{
       'cpf': instance.cpf,
       'nome': instance.nome,

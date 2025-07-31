@@ -15,29 +15,23 @@ class WebDatabaseHelper {
   }
 
   /// Configurações específicas para web
-  static Map<String, dynamic> getWebConfig() {
-    return {
+  static Map<String, dynamic> getWebConfig() => {
       'enableForeignKeys':
           false, // Foreign keys não são totalmente suportadas no IndexedDB
       'enableWAL': false, // WAL mode não é suportado na web
       'enableSync': true, // Habilita sincronização
     };
-  }
 
   /// Configurações específicas para mobile/desktop
-  static Map<String, dynamic> getNativeConfig() {
-    return {
+  static Map<String, dynamic> getNativeConfig() => {
       'enableForeignKeys': true,
       'enableWAL': true,
       'enableSync': true,
       'logStatements': kDebugMode,
     };
-  }
 
   /// Retorna configurações baseadas na plataforma
-  static Map<String, dynamic> getPlatformConfig() {
-    return isWeb ? getWebConfig() : getNativeConfig();
-  }
+  static Map<String, dynamic> getPlatformConfig() => isWeb ? getWebConfig() : getNativeConfig();
 
   /// Log específico para diferentes plataformas
   static void logPlatformInfo() {

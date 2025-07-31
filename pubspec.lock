@@ -313,6 +313,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.28.0"
+  drift_flutter:
+    dependency: "direct main"
+    description:
+      name: drift_flutter
+      sha256: ccfb42bc942e59f81500b16228df59cf8eb40d2fbd96637ff677df923350af7b
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.2.5"
   envied:
     dependency: "direct main"
     description:
@@ -514,10 +522,10 @@ packages:
     dependency: "direct dev"
     description:
       name: flutter_lints
-      sha256: "3105dc8492f6183fb076ccf1f351ac3d60564bff92e20bfc4af9cc1651f4e7e1"
+      sha256: "5398f14efa795ffb7a33e9b6a08798b26a180edac4ad7db3f231e40f82ce11e1"
       url: "https://pub.dev"
     source: hosted
-    version: "6.0.0"
+    version: "5.0.0"
   flutter_localizations:
     dependency: transitive
     description: flutter
@@ -753,10 +761,10 @@ packages:
     dependency: transitive
     description:
       name: lints
-      sha256: a5e2b223cb7c9c8efdc663ef484fdd95bb243bff242ef5b13e26883547fce9a0
+      sha256: c35bb79562d980e9a453fc715854e1ed39e24e7d0297a880ef54e17f9874a9d7
       url: "https://pub.dev"
     source: hosted
-    version: "6.0.0"
+    version: "5.1.1"
   logger:
     dependency: "direct main"
     description:
@@ -1083,7 +1091,7 @@ packages:
     source: hosted
     version: "1.10.1"
   sqlite3:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: sqlite3
       sha256: dd806fff004a0aeb01e208b858dbc649bc72104670d425a81a6dd17698535f6e
@@ -1098,6 +1106,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.5.38"
+  sqlite3_web:
+    dependency: "direct main"
+    description:
+      name: sqlite3_web
+      sha256: b4043336e74cac54d3ca44c90434a3c310550b9a80851b09ad1af282af0df6d4
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.1.3"
   sqlparser:
     dependency: transitive
     description:

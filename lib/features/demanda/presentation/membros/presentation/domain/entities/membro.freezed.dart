@@ -1,5 +1,5 @@
-// coverage:ignore-file
 // GENERATED CODE - DO NOT MODIFY BY HAND
+// coverage:ignore-file
 // ignore_for_file: type=lint
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
@@ -9,222 +9,32 @@ part of 'membro.dart';
 // FreezedGenerator
 // **************************************************************************
 
+// dart format off
 T _$identity<T>(T value) => value;
-
-final _privateConstructorUsedError = UnsupportedError(
-    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
-
-Membro _$MembroFromJson(Map<String, dynamic> json) {
-  return _Membro.fromJson(json);
-}
 
 /// @nodoc
 mixin _$Membro {
-  String get cpf => throw _privateConstructorUsedError;
-  String get nome => throw _privateConstructorUsedError;
-  String get cpfResponsavel => throw _privateConstructorUsedError;
-  DateTime? get timestamp => throw _privateConstructorUsedError;
-  String? get status => throw _privateConstructorUsedError;
-  @optionalTypeArgs
-  TResult when<TResult extends Object?>(
-    TResult Function(String cpf, String nome, String cpfResponsavel,
-            DateTime? timestamp, String? status)
-        $default,
-  ) =>
-      throw _privateConstructorUsedError;
-  @optionalTypeArgs
-  TResult? whenOrNull<TResult extends Object?>(
-    TResult? Function(String cpf, String nome, String cpfResponsavel,
-            DateTime? timestamp, String? status)?
-        $default,
-  ) =>
-      throw _privateConstructorUsedError;
-  @optionalTypeArgs
-  TResult maybeWhen<TResult extends Object?>(
-    TResult Function(String cpf, String nome, String cpfResponsavel,
-            DateTime? timestamp, String? status)?
-        $default, {
-    required TResult orElse(),
-  }) =>
-      throw _privateConstructorUsedError;
-  @optionalTypeArgs
-  TResult map<TResult extends Object?>(
-    TResult Function(_Membro value) $default,
-  ) =>
-      throw _privateConstructorUsedError;
-  @optionalTypeArgs
-  TResult? mapOrNull<TResult extends Object?>(
-    TResult? Function(_Membro value)? $default,
-  ) =>
-      throw _privateConstructorUsedError;
-  @optionalTypeArgs
-  TResult maybeMap<TResult extends Object?>(
-    TResult Function(_Membro value)? $default, {
-    required TResult orElse(),
-  }) =>
-      throw _privateConstructorUsedError;
-
-  /// Serializes this Membro to a JSON map.
-  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  String get cpf;
+  String get nome;
+  String get cpfResponsavel;
+  DateTime? get timestamp;
+  String? get status;
 
   /// Create a copy of Membro
   /// with the given fields replaced by the non-null parameter values.
   @JsonKey(includeFromJson: false, includeToJson: false)
-  $MembroCopyWith<Membro> get copyWith => throw _privateConstructorUsedError;
-}
-
-/// @nodoc
-abstract class $MembroCopyWith<$Res> {
-  factory $MembroCopyWith(Membro value, $Res Function(Membro) then) =
-      _$MembroCopyWithImpl<$Res, Membro>;
-  @useResult
-  $Res call(
-      {String cpf,
-      String nome,
-      String cpfResponsavel,
-      DateTime? timestamp,
-      String? status});
-}
-
-/// @nodoc
-class _$MembroCopyWithImpl<$Res, $Val extends Membro>
-    implements $MembroCopyWith<$Res> {
-  _$MembroCopyWithImpl(this._value, this._then);
-
-  // ignore: unused_field
-  final $Val _value;
-  // ignore: unused_field
-  final $Res Function($Val) _then;
-
-  /// Create a copy of Membro
-  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
-  @override
-  $Res call({
-    Object? cpf = null,
-    Object? nome = null,
-    Object? cpfResponsavel = null,
-    Object? timestamp = freezed,
-    Object? status = freezed,
-  }) {
-    return _then(_value.copyWith(
-      cpf: null == cpf
-          ? _value.cpf
-          : cpf // ignore: cast_nullable_to_non_nullable
-              as String,
-      nome: null == nome
-          ? _value.nome
-          : nome // ignore: cast_nullable_to_non_nullable
-              as String,
-      cpfResponsavel: null == cpfResponsavel
-          ? _value.cpfResponsavel
-          : cpfResponsavel // ignore: cast_nullable_to_non_nullable
-              as String,
-      timestamp: freezed == timestamp
-          ? _value.timestamp
-          : timestamp // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
-      status: freezed == status
-          ? _value.status
-          : status // ignore: cast_nullable_to_non_nullable
-              as String?,
-    ) as $Val);
-  }
-}
+  $MembroCopyWith<Membro> get copyWith =>
+      _$MembroCopyWithImpl<Membro>(this as Membro, _$identity);
 
-/// @nodoc
-abstract class _$$MembroImplCopyWith<$Res> implements $MembroCopyWith<$Res> {
-  factory _$$MembroImplCopyWith(
-          _$MembroImpl value, $Res Function(_$MembroImpl) then) =
-      __$$MembroImplCopyWithImpl<$Res>;
-  @override
-  @useResult
-  $Res call(
-      {String cpf,
-      String nome,
-      String cpfResponsavel,
-      DateTime? timestamp,
-      String? status});
-}
-
-/// @nodoc
-class __$$MembroImplCopyWithImpl<$Res>
-    extends _$MembroCopyWithImpl<$Res, _$MembroImpl>
-    implements _$$MembroImplCopyWith<$Res> {
-  __$$MembroImplCopyWithImpl(
-      _$MembroImpl _value, $Res Function(_$MembroImpl) _then)
-      : super(_value, _then);
-
-  /// Create a copy of Membro
-  /// with the given fields replaced by the non-null parameter values.
-  @pragma('vm:prefer-inline')
-  @override
-  $Res call({
-    Object? cpf = null,
-    Object? nome = null,
-    Object? cpfResponsavel = null,
-    Object? timestamp = freezed,
-    Object? status = freezed,
-  }) {
-    return _then(_$MembroImpl(
-      cpf: null == cpf
-          ? _value.cpf
-          : cpf // ignore: cast_nullable_to_non_nullable
-              as String,
-      nome: null == nome
-          ? _value.nome
-          : nome // ignore: cast_nullable_to_non_nullable
-              as String,
-      cpfResponsavel: null == cpfResponsavel
-          ? _value.cpfResponsavel
-          : cpfResponsavel // ignore: cast_nullable_to_non_nullable
-              as String,
-      timestamp: freezed == timestamp
-          ? _value.timestamp
-          : timestamp // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
-      status: freezed == status
-          ? _value.status
-          : status // ignore: cast_nullable_to_non_nullable
-              as String?,
-    ));
-  }
-}
-
-/// @nodoc
-@JsonSerializable()
-class _$MembroImpl implements _Membro {
-  const _$MembroImpl(
-      {required this.cpf,
-      required this.nome,
-      required this.cpfResponsavel,
-      this.timestamp,
-      this.status});
-
-  factory _$MembroImpl.fromJson(Map<String, dynamic> json) =>
-      _$$MembroImplFromJson(json);
-
-  @override
-  final String cpf;
-  @override
-  final String nome;
-  @override
-  final String cpfResponsavel;
-  @override
-  final DateTime? timestamp;
-  @override
-  final String? status;
-
-  @override
-  String toString() {
-    return 'Membro(cpf: $cpf, nome: $nome, cpfResponsavel: $cpfResponsavel, timestamp: $timestamp, status: $status)';
-  }
+  /// Serializes this Membro to a JSON map.
+  Map<String, dynamic> toJson();
 
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$MembroImpl &&
+            other is Membro &&
             (identical(other.cpf, cpf) || other.cpf == cpf) &&
             (identical(other.nome, nome) || other.nome == nome) &&
             (identical(other.cpfResponsavel, cpfResponsavel) ||
@@ -239,35 +49,159 @@ class _$MembroImpl implements _Membro {
   int get hashCode =>
       Object.hash(runtimeType, cpf, nome, cpfResponsavel, timestamp, status);
 
+  @override
+  String toString() {
+    return 'Membro(cpf: $cpf, nome: $nome, cpfResponsavel: $cpfResponsavel, timestamp: $timestamp, status: $status)';
+  }
+}
+
+/// @nodoc
+abstract mixin class $MembroCopyWith<$Res> {
+  factory $MembroCopyWith(Membro value, $Res Function(Membro) _then) =
+      _$MembroCopyWithImpl;
+  @useResult
+  $Res call(
+      {String cpf,
+      String nome,
+      String cpfResponsavel,
+      DateTime? timestamp,
+      String? status});
+}
+
+/// @nodoc
+class _$MembroCopyWithImpl<$Res> implements $MembroCopyWith<$Res> {
+  _$MembroCopyWithImpl(this._self, this._then);
+
+  final Membro _self;
+  final $Res Function(Membro) _then;
+
   /// Create a copy of Membro
   /// with the given fields replaced by the non-null parameter values.
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  @override
   @pragma('vm:prefer-inline')
-  _$$MembroImplCopyWith<_$MembroImpl> get copyWith =>
-      __$$MembroImplCopyWithImpl<_$MembroImpl>(this, _$identity);
-
   @override
+  $Res call({
+    Object? cpf = null,
+    Object? nome = null,
+    Object? cpfResponsavel = null,
+    Object? timestamp = freezed,
+    Object? status = freezed,
+  }) {
+    return _then(_self.copyWith(
+      cpf: null == cpf
+          ? _self.cpf
+          : cpf // ignore: cast_nullable_to_non_nullable
+              as String,
+      nome: null == nome
+          ? _self.nome
+          : nome // ignore: cast_nullable_to_non_nullable
+              as String,
+      cpfResponsavel: null == cpfResponsavel
+          ? _self.cpfResponsavel
+          : cpfResponsavel // ignore: cast_nullable_to_non_nullable
+              as String,
+      timestamp: freezed == timestamp
+          ? _self.timestamp
+          : timestamp // ignore: cast_nullable_to_non_nullable
+              as DateTime?,
+      status: freezed == status
+          ? _self.status
+          : status // ignore: cast_nullable_to_non_nullable
+              as String?,
+    ));
+  }
+}
+
+/// Adds pattern-matching-related methods to [Membro].
+extension MembroPatterns on Membro {
+  /// A variant of `map` that fallback to returning `orElse`.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case _:
+  ///     return orElse();
+  /// }
+  /// ```
+
   @optionalTypeArgs
-  TResult when<TResult extends Object?>(
-    TResult Function(String cpf, String nome, String cpfResponsavel,
-            DateTime? timestamp, String? status)
-        $default,
-  ) {
-    return $default(cpf, nome, cpfResponsavel, timestamp, status);
+  TResult maybeMap<TResult extends Object?>(
+    TResult Function(_Membro value)? $default, {
+    required TResult orElse(),
+  }) {
+    final _that = this;
+    switch (_that) {
+      case _Membro() when $default != null:
+        return $default(_that);
+      case _:
+        return orElse();
+    }
   }
 
-  @override
+  /// A `switch`-like method, using callbacks.
+  ///
+  /// Callbacks receives the raw object, upcasted.
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case final Subclass2 value:
+  ///     return ...;
+  /// }
+  /// ```
+
   @optionalTypeArgs
-  TResult? whenOrNull<TResult extends Object?>(
-    TResult? Function(String cpf, String nome, String cpfResponsavel,
-            DateTime? timestamp, String? status)?
-        $default,
+  TResult map<TResult extends Object?>(
+    TResult Function(_Membro value) $default,
   ) {
-    return $default?.call(cpf, nome, cpfResponsavel, timestamp, status);
+    final _that = this;
+    switch (_that) {
+      case _Membro():
+        return $default(_that);
+      case _:
+        throw StateError('Unexpected subclass');
+    }
   }
 
-  @override
+  /// A variant of `map` that fallback to returning `null`.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case _:
+  ///     return null;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>(
+    TResult? Function(_Membro value)? $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _Membro() when $default != null:
+        return $default(_that);
+      case _:
+        return null;
+    }
+  }
+
+  /// A variant of `when` that fallback to an `orElse` callback.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case _:
+  ///     return orElse();
+  /// }
+  /// ```
+
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>(
     TResult Function(String cpf, String nome, String cpfResponsavel,
@@ -275,73 +209,191 @@ class _$MembroImpl implements _Membro {
         $default, {
     required TResult orElse(),
   }) {
-    if ($default != null) {
-      return $default(cpf, nome, cpfResponsavel, timestamp, status);
+    final _that = this;
+    switch (_that) {
+      case _Membro() when $default != null:
+        return $default(_that.cpf, _that.nome, _that.cpfResponsavel,
+            _that.timestamp, _that.status);
+      case _:
+        return orElse();
     }
-    return orElse();
   }
 
-  @override
+  /// A `switch`-like method, using callbacks.
+  ///
+  /// As opposed to `map`, this offers destructuring.
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case Subclass2(:final field2):
+  ///     return ...;
+  /// }
+  /// ```
+
   @optionalTypeArgs
-  TResult map<TResult extends Object?>(
-    TResult Function(_Membro value) $default,
+  TResult when<TResult extends Object?>(
+    TResult Function(String cpf, String nome, String cpfResponsavel,
+            DateTime? timestamp, String? status)
+        $default,
   ) {
-    return $default(this);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult? mapOrNull<TResult extends Object?>(
-    TResult? Function(_Membro value)? $default,
-  ) {
-    return $default?.call(this);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult maybeMap<TResult extends Object?>(
-    TResult Function(_Membro value)? $default, {
-    required TResult orElse(),
-  }) {
-    if ($default != null) {
-      return $default(this);
+    final _that = this;
+    switch (_that) {
+      case _Membro():
+        return $default(_that.cpf, _that.nome, _that.cpfResponsavel,
+            _that.timestamp, _that.status);
+      case _:
+        throw StateError('Unexpected subclass');
     }
-    return orElse();
   }
 
-  @override
-  Map<String, dynamic> toJson() {
-    return _$$MembroImplToJson(
-      this,
-    );
+  /// A variant of `when` that fallback to returning `null`
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case _:
+  ///     return null;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>(
+    TResult? Function(String cpf, String nome, String cpfResponsavel,
+            DateTime? timestamp, String? status)?
+        $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _Membro() when $default != null:
+        return $default(_that.cpf, _that.nome, _that.cpfResponsavel,
+            _that.timestamp, _that.status);
+      case _:
+        return null;
+    }
   }
 }
 
-abstract class _Membro implements Membro {
-  const factory _Membro(
-      {required final String cpf,
-      required final String nome,
-      required final String cpfResponsavel,
-      final DateTime? timestamp,
-      final String? status}) = _$MembroImpl;
+/// @nodoc
+@JsonSerializable()
+class _Membro implements Membro {
+  const _Membro(
+      {required this.cpf,
+      required this.nome,
+      required this.cpfResponsavel,
+      this.timestamp,
+      this.status});
+  factory _Membro.fromJson(Map<String, dynamic> json) => _$MembroFromJson(json);
 
-  factory _Membro.fromJson(Map<String, dynamic> json) = _$MembroImpl.fromJson;
-
   @override
-  String get cpf;
+  final String cpf;
   @override
-  String get nome;
+  final String nome;
   @override
-  String get cpfResponsavel;
+  final String cpfResponsavel;
   @override
-  DateTime? get timestamp;
+  final DateTime? timestamp;
   @override
-  String? get status;
+  final String? status;
 
   /// Create a copy of Membro
   /// with the given fields replaced by the non-null parameter values.
   @override
   @JsonKey(includeFromJson: false, includeToJson: false)
-  _$$MembroImplCopyWith<_$MembroImpl> get copyWith =>
-      throw _privateConstructorUsedError;
+  @pragma('vm:prefer-inline')
+  _$MembroCopyWith<_Membro> get copyWith =>
+      __$MembroCopyWithImpl<_Membro>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$MembroToJson(
+      this,
+    );
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _Membro &&
+            (identical(other.cpf, cpf) || other.cpf == cpf) &&
+            (identical(other.nome, nome) || other.nome == nome) &&
+            (identical(other.cpfResponsavel, cpfResponsavel) ||
+                other.cpfResponsavel == cpfResponsavel) &&
+            (identical(other.timestamp, timestamp) ||
+                other.timestamp == timestamp) &&
+            (identical(other.status, status) || other.status == status));
+  }
+
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  int get hashCode =>
+      Object.hash(runtimeType, cpf, nome, cpfResponsavel, timestamp, status);
+
+  @override
+  String toString() {
+    return 'Membro(cpf: $cpf, nome: $nome, cpfResponsavel: $cpfResponsavel, timestamp: $timestamp, status: $status)';
+  }
 }
+
+/// @nodoc
+abstract mixin class _$MembroCopyWith<$Res> implements $MembroCopyWith<$Res> {
+  factory _$MembroCopyWith(_Membro value, $Res Function(_Membro) _then) =
+      __$MembroCopyWithImpl;
+  @override
+  @useResult
+  $Res call(
+      {String cpf,
+      String nome,
+      String cpfResponsavel,
+      DateTime? timestamp,
+      String? status});
+}
+
+/// @nodoc
+class __$MembroCopyWithImpl<$Res> implements _$MembroCopyWith<$Res> {
+  __$MembroCopyWithImpl(this._self, this._then);
+
+  final _Membro _self;
+  final $Res Function(_Membro) _then;
+
+  /// Create a copy of Membro
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $Res call({
+    Object? cpf = null,
+    Object? nome = null,
+    Object? cpfResponsavel = null,
+    Object? timestamp = freezed,
+    Object? status = freezed,
+  }) {
+    return _then(_Membro(
+      cpf: null == cpf
+          ? _self.cpf
+          : cpf // ignore: cast_nullable_to_non_nullable
+              as String,
+      nome: null == nome
+          ? _self.nome
+          : nome // ignore: cast_nullable_to_non_nullable
+              as String,
+      cpfResponsavel: null == cpfResponsavel
+          ? _self.cpfResponsavel
+          : cpfResponsavel // ignore: cast_nullable_to_non_nullable
+              as String,
+      timestamp: freezed == timestamp
+          ? _self.timestamp
+          : timestamp // ignore: cast_nullable_to_non_nullable
+              as DateTime?,
+      status: freezed == status
+          ? _self.status
+          : status // ignore: cast_nullable_to_non_nullable
+              as String?,
+    ));
+  }
+}
+
+// dart format on

@@ -6,11 +6,11 @@ part of 'user.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-_$UserImpl _$$UserImplFromJson(Map<String, dynamic> json) => $checkedCreate(
-      r'_$UserImpl',
+_User _$UserFromJson(Map<String, dynamic> json) => $checkedCreate(
+      '_User',
       json,
       ($checkedConvert) {
-        final val = _$UserImpl(
+        final val = _User(
           id: $checkedConvert('id', (v) => (v as num).toInt()),
           username: $checkedConvert('username', (v) => v as String),
           email: $checkedConvert('email', (v) => v as String),
@@ -32,8 +32,7 @@ _$UserImpl _$$UserImplFromJson(Map<String, dynamic> json) => $checkedCreate(
       },
     );
 
-Map<String, dynamic> _$$UserImplToJson(_$UserImpl instance) =>
-    <String, dynamic>{
+Map<String, dynamic> _$UserToJson(_User instance) => <String, dynamic>{
       'id': instance.id,
       'username': instance.username,
       'email': instance.email,
@@ -44,12 +43,11 @@ Map<String, dynamic> _$$UserImplToJson(_$UserImpl instance) =>
       'last_name': instance.lastName,
     };
 
-_$AuthTokensImpl _$$AuthTokensImplFromJson(Map<String, dynamic> json) =>
-    $checkedCreate(
-      r'_$AuthTokensImpl',
+_AuthTokens _$AuthTokensFromJson(Map<String, dynamic> json) => $checkedCreate(
+      '_AuthTokens',
       json,
       ($checkedConvert) {
-        final val = _$AuthTokensImpl(
+        final val = _AuthTokens(
           accessToken: $checkedConvert('access_token', (v) => v as String),
           refreshToken: $checkedConvert('refresh_token', (v) => v as String),
           user: $checkedConvert(
@@ -63,19 +61,19 @@ _$AuthTokensImpl _$$AuthTokensImplFromJson(Map<String, dynamic> json) =>
       },
     );
 
-Map<String, dynamic> _$$AuthTokensImplToJson(_$AuthTokensImpl instance) =>
+Map<String, dynamic> _$AuthTokensToJson(_AuthTokens instance) =>
     <String, dynamic>{
       'access_token': instance.accessToken,
       'refresh_token': instance.refreshToken,
       'user': instance.user,
     };
 
-_$LoginRequestImpl _$$LoginRequestImplFromJson(Map<String, dynamic> json) =>
+_LoginRequest _$LoginRequestFromJson(Map<String, dynamic> json) =>
     $checkedCreate(
-      r'_$LoginRequestImpl',
+      '_LoginRequest',
       json,
       ($checkedConvert) {
-        final val = _$LoginRequestImpl(
+        final val = _LoginRequest(
           username: $checkedConvert('username', (v) => v as String),
           password: $checkedConvert('password', (v) => v as String),
         );
@@ -83,19 +81,18 @@ _$LoginRequestImpl _$$LoginRequestImplFromJson(Map<String, dynamic> json) =>
       },
     );
 
-Map<String, dynamic> _$$LoginRequestImplToJson(_$LoginRequestImpl instance) =>
+Map<String, dynamic> _$LoginRequestToJson(_LoginRequest instance) =>
     <String, dynamic>{
       'username': instance.username,
       'password': instance.password,
     };
 
-_$RegisterRequestImpl _$$RegisterRequestImplFromJson(
-        Map<String, dynamic> json) =>
+_RegisterRequest _$RegisterRequestFromJson(Map<String, dynamic> json) =>
     $checkedCreate(
-      r'_$RegisterRequestImpl',
+      '_RegisterRequest',
       json,
       ($checkedConvert) {
-        final val = _$RegisterRequestImpl(
+        final val = _RegisterRequest(
           username: $checkedConvert('username', (v) => v as String),
           email: $checkedConvert('email', (v) => v as String),
           password: $checkedConvert('password', (v) => v as String),
@@ -113,8 +110,7 @@ _$RegisterRequestImpl _$$RegisterRequestImplFromJson(
       },
     );
 
-Map<String, dynamic> _$$RegisterRequestImplToJson(
-        _$RegisterRequestImpl instance) =>
+Map<String, dynamic> _$RegisterRequestToJson(_RegisterRequest instance) =>
     <String, dynamic>{
       'username': instance.username,
       'email': instance.email,

@@ -6,11 +6,11 @@ part of 'membro.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-_$MembroImpl _$$MembroImplFromJson(Map<String, dynamic> json) => $checkedCreate(
-      r'_$MembroImpl',
+_Membro _$MembroFromJson(Map<String, dynamic> json) => $checkedCreate(
+      '_Membro',
       json,
       ($checkedConvert) {
-        final val = _$MembroImpl(
+        final val = _Membro(
           cpf: $checkedConvert('cpf', (v) => v as String),
           nome: $checkedConvert('nome', (v) => v as String),
           cpfResponsavel:
@@ -24,8 +24,7 @@ _$MembroImpl _$$MembroImplFromJson(Map<String, dynamic> json) => $checkedCreate(
       fieldKeyMap: const {'cpfResponsavel': 'cpf_responsavel'},
     );
 
-Map<String, dynamic> _$$MembroImplToJson(_$MembroImpl instance) =>
-    <String, dynamic>{
+Map<String, dynamic> _$MembroToJson(_Membro instance) => <String, dynamic>{
       'cpf': instance.cpf,
       'nome': instance.nome,
       'cpf_responsavel': instance.cpfResponsavel,

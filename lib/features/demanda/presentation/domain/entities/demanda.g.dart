@@ -6,12 +6,11 @@ part of 'demanda.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-_$DemandaImpl _$$DemandaImplFromJson(Map<String, dynamic> json) =>
-    $checkedCreate(
-      r'_$DemandaImpl',
+_Demanda _$DemandaFromJson(Map<String, dynamic> json) => $checkedCreate(
+      '_Demanda',
       json,
       ($checkedConvert) {
-        final val = _$DemandaImpl(
+        final val = _Demanda(
           cpfResponsavel:
               $checkedConvert('cpf_responsavel', (v) => v as String),
           tipo: $checkedConvert(
@@ -32,8 +31,7 @@ _$DemandaImpl _$$DemandaImplFromJson(Map<String, dynamic> json) =>
       },
     );
 
-Map<String, dynamic> _$$DemandaImplToJson(_$DemandaImpl instance) =>
-    <String, dynamic>{
+Map<String, dynamic> _$DemandaToJson(_Demanda instance) => <String, dynamic>{
       'cpf_responsavel': instance.cpfResponsavel,
       'tipo': _$TipoDemandaEnumMap[instance.tipo]!,
       'demanda': instance.demanda,
@@ -52,12 +50,12 @@ const _$TipoDemandaEnumMap = {
   TipoDemanda.interna: 'interna',
 };
 
-_$DemandaSaudeImpl _$$DemandaSaudeImplFromJson(Map<String, dynamic> json) =>
+_DemandaSaude _$DemandaSaudeFromJson(Map<String, dynamic> json) =>
     $checkedCreate(
-      r'_$DemandaSaudeImpl',
+      '_DemandaSaude',
       json,
       ($checkedConvert) {
-        final val = _$DemandaSaudeImpl(
+        final val = _DemandaSaude(
           cpf: $checkedConvert('cpf', (v) => v as String),
           gestPuerNutriz:
               $checkedConvert('gest_puer_nutriz', (v) => v as String),
@@ -91,7 +89,7 @@ _$DemandaSaudeImpl _$$DemandaSaudeImplFromJson(Map<String, dynamic> json) =>
       },
     );
 
-Map<String, dynamic> _$$DemandaSaudeImplToJson(_$DemandaSaudeImpl instance) =>
+Map<String, dynamic> _$DemandaSaudeToJson(_DemandaSaude instance) =>
     <String, dynamic>{
       'cpf': instance.cpf,
       'gest_puer_nutriz': instance.gestPuerNutriz,
@@ -108,13 +106,12 @@ Map<String, dynamic> _$$DemandaSaudeImplToJson(_$DemandaSaudeImpl instance) =>
       'evolucao': instance.evolucao,
     };
 
-_$DemandaEducacaoImpl _$$DemandaEducacaoImplFromJson(
-        Map<String, dynamic> json) =>
+_DemandaEducacao _$DemandaEducacaoFromJson(Map<String, dynamic> json) =>
     $checkedCreate(
-      r'_$DemandaEducacaoImpl',
+      '_DemandaEducacao',
       json,
       ($checkedConvert) {
-        final val = _$DemandaEducacaoImpl(
+        final val = _DemandaEducacao(
           cpfResponsavel:
               $checkedConvert('cpf_responsavel', (v) => v as String),
           nome: $checkedConvert('nome', (v) => v as String),
@@ -139,8 +136,7 @@ _$DemandaEducacaoImpl _$$DemandaEducacaoImplFromJson(
       },
     );
 
-Map<String, dynamic> _$$DemandaEducacaoImplToJson(
-        _$DemandaEducacaoImpl instance) =>
+Map<String, dynamic> _$DemandaEducacaoToJson(_DemandaEducacao instance) =>
     <String, dynamic>{
       'cpf_responsavel': instance.cpfResponsavel,
       'nome': instance.nome,
@@ -154,13 +150,12 @@ Map<String, dynamic> _$$DemandaEducacaoImplToJson(
       'evolucao': instance.evolucao,
     };
 
-_$DemandaHabitacaoImpl _$$DemandaHabitacaoImplFromJson(
-        Map<String, dynamic> json) =>
+_DemandaHabitacao _$DemandaHabitacaoFromJson(Map<String, dynamic> json) =>
     $checkedCreate(
-      r'_$DemandaHabitacaoImpl',
+      '_DemandaHabitacao',
       json,
       ($checkedConvert) {
-        final val = _$DemandaHabitacaoImpl(
+        final val = _DemandaHabitacao(
           cpf: $checkedConvert('cpf', (v) => v as String),
           latitude: $checkedConvert('latitude', (v) => (v as num?)?.toDouble()),
           longitude:
@@ -183,8 +178,7 @@ _$DemandaHabitacaoImpl _$$DemandaHabitacaoImplFromJson(
       },
     );
 
-Map<String, dynamic> _$$DemandaHabitacaoImplToJson(
-        _$DemandaHabitacaoImpl instance) =>
+Map<String, dynamic> _$DemandaHabitacaoToJson(_DemandaHabitacao instance) =>
     <String, dynamic>{
       'cpf': instance.cpf,
       'latitude': instance.latitude,
@@ -198,13 +192,12 @@ Map<String, dynamic> _$$DemandaHabitacaoImplToJson(
       'evolucao': instance.evolucao,
     };
 
-_$DemandaAmbienteImpl _$$DemandaAmbienteImplFromJson(
-        Map<String, dynamic> json) =>
+_DemandaAmbiente _$DemandaAmbienteFromJson(Map<String, dynamic> json) =>
     $checkedCreate(
-      r'_$DemandaAmbienteImpl',
+      '_DemandaAmbiente',
       json,
       ($checkedConvert) {
-        final val = _$DemandaAmbienteImpl(
+        final val = _DemandaAmbiente(
           cpf: $checkedConvert('cpf', (v) => v as String),
           acompanhaTutor:
               $checkedConvert('acompanha_tutor', (v) => v as String),
@@ -229,8 +222,7 @@ _$DemandaAmbienteImpl _$$DemandaAmbienteImplFromJson(
       },
     );
 
-Map<String, dynamic> _$$DemandaAmbienteImplToJson(
-        _$DemandaAmbienteImpl instance) =>
+Map<String, dynamic> _$DemandaAmbienteToJson(_DemandaAmbiente instance) =>
     <String, dynamic>{
       'cpf': instance.cpf,
       'acompanha_tutor': instance.acompanhaTutor,
@@ -245,12 +237,12 @@ Map<String, dynamic> _$$DemandaAmbienteImplToJson(
       'evolucao': instance.evolucao,
     };
 
-_$DemandaInternaImpl _$$DemandaInternaImplFromJson(Map<String, dynamic> json) =>
+_DemandaInterna _$DemandaInternaFromJson(Map<String, dynamic> json) =>
     $checkedCreate(
-      r'_$DemandaInternaImpl',
+      '_DemandaInterna',
       json,
       ($checkedConvert) {
-        final val = _$DemandaInternaImpl(
+        final val = _DemandaInterna(
           cpf: $checkedConvert('cpf', (v) => v as String),
           demanda: $checkedConvert('demanda', (v) => v as String),
           data: $checkedConvert('data', (v) => DateTime.parse(v as String)),
@@ -261,8 +253,7 @@ _$DemandaInternaImpl _$$DemandaInternaImplFromJson(Map<String, dynamic> json) =>
       },
     );
 
-Map<String, dynamic> _$$DemandaInternaImplToJson(
-        _$DemandaInternaImpl instance) =>
+Map<String, dynamic> _$DemandaInternaToJson(_DemandaInterna instance) =>
     <String, dynamic>{
       'cpf': instance.cpf,
       'demanda': instance.demanda,

@@ -29,12 +29,15 @@ dependencies:
 
   # Local Storage - Web Compatible
   drift: ^2.20.3
+  drift_flutter: ^0.2.5
 
   # SQLite APENAS para mobile/desktop (não web)
   sqlite3_flutter_libs: ^0.5.24
   # Path provider
   path_provider: ^2.1.4
   path: ^1.9.0
+  sqlite3: ^2.4.6
+  sqlite3_web: ^0.1.3
 
   # Environment
   envied: ^1.1.1
