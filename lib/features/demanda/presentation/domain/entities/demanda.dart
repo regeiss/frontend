@@ -17,7 +17,7 @@ enum TipoDemanda {
 }
 
 @freezed
-class Demanda with _$Demanda {
+abstract class Demanda with _$Demanda {
   const factory Demanda({
     required String cpfResponsavel, required TipoDemanda tipo, required String demanda, required DateTime data, int? id,
     String? status,
@@ -30,7 +30,7 @@ class Demanda with _$Demanda {
 }
 
 @freezed
-class DemandaSaude with _$DemandaSaude {
+abstract class DemandaSaude with _$DemandaSaude {
   const factory DemandaSaude({
     required String cpf,
     required String gestPuerNutriz, required String mobReduzida, required String cuidaOutrem, required String pcdOuMental, String? genero,
@@ -48,7 +48,7 @@ class DemandaSaude with _$DemandaSaude {
 }
 
 @freezed
-class DemandaEducacao with _$DemandaEducacao {
+abstract class DemandaEducacao with _$DemandaEducacao {
   const factory DemandaEducacao({
     required String cpfResponsavel,
     required String nome,
@@ -66,7 +66,7 @@ class DemandaEducacao with _$DemandaEducacao {
 }
 
 @freezed
-class DemandaHabitacao with _$DemandaHabitacao {
+abstract class DemandaHabitacao with _$DemandaHabitacao {
   const factory DemandaHabitacao({
     required String cpf,
     double? latitude,
@@ -85,7 +85,7 @@ class DemandaHabitacao with _$DemandaHabitacao {
 }
 
 @freezed
-class DemandaAmbiente with _$DemandaAmbiente {
+abstract class DemandaAmbiente with _$DemandaAmbiente {
   const factory DemandaAmbiente({
     required String cpf,
     required String acompanhaTutor, int? quantidade,
@@ -104,7 +104,7 @@ class DemandaAmbiente with _$DemandaAmbiente {
 }
 
 @freezed
-class DemandaInterna with _$DemandaInterna {
+abstract class DemandaInterna with _$DemandaInterna {
   const factory DemandaInterna({
     required String cpf,
     required String demanda,

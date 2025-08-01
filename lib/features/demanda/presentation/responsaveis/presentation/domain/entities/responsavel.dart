@@ -4,7 +4,7 @@ part 'responsavel.freezed.dart';
 part 'responsavel.g.dart';
 
 @freezed
-class Responsavel with _$Responsavel {
+abstract class Responsavel with _$Responsavel {
   const factory Responsavel({
     required String cpf,
     required String nome,

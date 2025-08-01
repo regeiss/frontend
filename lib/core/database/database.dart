@@ -67,38 +67,38 @@ class AppDatabase extends _$AppDatabase {
 
   // CRUD Operations
   Future<List<ResponsavelTableData>> getAllResponsaveis() async =>
-      await select(responsavelTable).get();
+      select(responsavelTable).get();
 
   Future<ResponsavelTableData?> getResponsavelByCpf(String cpf) async =>
-      await (select(responsavelTable)..where((t) => t.cpf.equals(cpf)))
+      (select(responsavelTable)..where((t) => t.cpf.equals(cpf)))
           .getSingleOrNull();
 
   Future<int> insertResponsavel(ResponsavelTableCompanion responsavel) async =>
-      await into(responsavelTable).insert(responsavel);
+      into(responsavelTable).insert(responsavel);
 
   Future<bool> updateResponsavel(ResponsavelTableCompanion responsavel) async =>
-      await update(responsavelTable).replace(responsavel);
+      update(responsavelTable).replace(responsavel);
 
   Future<int> deleteResponsavel(String cpf) async =>
-      await (delete(responsavelTable)..where((t) => t.cpf.equals(cpf))).go();
+      (delete(responsavelTable)..where((t) => t.cpf.equals(cpf))).go();
 
   Future<List<MembroTableData>> getMembrosDoResponsavel(
           String cpfResponsavel) async =>
-      await (select(membroTable)
+      (select(membroTable)
             ..where((t) => t.cpfResponsavel.equals(cpfResponsavel)))
           .get();
 
   Future<int> insertMembro(MembroTableCompanion membro) async =>
-      await into(membroTable).insert(membro);
+      into(membroTable).insert(membro);
 
   Future<List<DemandaTableData>> getDemandasDoResponsavel(
           String cpfResponsavel) async =>
-      await (select(demandaTable)
+      (select(demandaTable)
             ..where((t) => t.cpfResponsavel.equals(cpfResponsavel)))
           .get();
 
   Future<int> insertDemanda(DemandaTableCompanion demanda) async =>
-      await into(demandaTable).insert(demanda);
+      into(demandaTable).insert(demanda);
 
   // Cache operations
   Future<void> saveToCache(String key, String data,

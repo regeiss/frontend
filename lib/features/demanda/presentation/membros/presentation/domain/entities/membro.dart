@@ -4,7 +4,7 @@ part 'membro.freezed.dart';
 part 'membro.g.dart';
 
 @freezed
-class Membro with _$Membro {
+abstract class Membro with _$Membro {
   const factory Membro({
     required String cpf,
     required String nome,

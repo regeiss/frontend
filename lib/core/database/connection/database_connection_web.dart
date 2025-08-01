@@ -3,7 +3,6 @@
 
 import 'package:drift/drift.dart';
 import 'package:drift/native.dart';
-import 'package:drift/wasm.dart';
 
 import '../../config/logging/app_logger.dart'; // ← MUDOU: usar /wasm.dart ao invés de /web.dart
 

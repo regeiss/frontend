@@ -4,7 +4,7 @@ part 'user.freezed.dart';
 part 'user.g.dart';
 
 @freezed
-class User with _$User {
+abstract class User with _$User {
   const factory User({
     required int id,
     required String username,
@@ -20,21 +20,21 @@ class User with _$User {
 }
 
 @freezed
-class AuthTokens with _$AuthTokens {
-  const AuthTokens._(); // Construtor privado para extensões
+abstract class AuthTokens with _$AuthTokens { // Construtor privado para extensões
 
   const factory AuthTokens({
     required String accessToken,
     required String refreshToken,
     required User user,
   }) = _AuthTokens;
+  const AuthTokens._();
 
   factory AuthTokens.fromJson(Map<String, dynamic> json) =>
       _$AuthTokensFromJson(json);
 }
 
 @freezed
-class LoginRequest with _$LoginRequest {
+abstract class LoginRequest with _$LoginRequest {
   const factory LoginRequest({
     required String username,
     required String password,
@@ -47,7 +47,7 @@ class LoginRequest with _$LoginRequest {
 }
 
 @freezed
-class RegisterRequest with _$RegisterRequest {
+abstract class RegisterRequest with _$RegisterRequest {
   const factory RegisterRequest({
     required String username,
     required String email,
