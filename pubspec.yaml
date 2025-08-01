@@ -31,14 +31,10 @@ dependencies:
   drift: ^2.26.0
   drift_flutter: ^0.2.5
 
-  # SQLite APENAS para mobile/desktop (não web)
-  sqlite3: ^2.4.6
-  sqlite3_flutter_libs: ^0.5.24
-  
   # Path provider
   path_provider: ^2.1.4
   path: ^1.9.0
- 
+
   # Environment
   envied: ^1.1.1
 
@@ -76,6 +72,7 @@ dependencies:
   google_fonts: ^6.2.1
   material_design_icons_flutter: ^7.0.7296
 
+  http: any
 dev_dependencies:
   flutter_test:
     sdk: flutter

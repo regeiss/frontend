@@ -9,8 +9,6 @@ import 'package:flutter/foundation.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart'
     if (dart.library.html) 'dart:async';
-import 'package:sqlite3/sqlite3.dart';
-import 'package:sqlite3_flutter_libs/sqlite3_flutter_libs.dart';
 
 import '../config/logging/app_logger.dart';
 import 'tables/cache_table.dart';
@@ -130,82 +128,83 @@ class AppDatabase extends _$AppDatabase {
 }
 
 // Função para abrir conexão multiplataforma
-// DatabaseConnection _openConnection() {
-//   if (kIsWeb) {
-//     return _openWebConnection();
-//   } else {
-//     return _openMobileConnection();
-//   }
-// }
+DatabaseConnection _openConnection() {
+  if (kIsWeb) {
+    return _openWebConnection();
+  } else {
+    return _openMobileConnection();
+  }
+}
 
-LazyDatabase _openConnection() => LazyDatabase(() async {
-      final dbFolder = await getApplicationDocumentsDirectory();
-      final file = File(p.join(dbFolder.path, 'cadastro_unificado.db'));
-
-      // CORRIGIDO: Removido closeExecutorOnClose
-      return NativeDatabase.createInBackground(file, logStatements: true);
-    });
-
-// Conexão WEB - usando a API moderna
-// DatabaseConnection _openWebConnection() {
-//   AppLogger.info('🌐 Configurando Drift para Web');
-
-//   return DatabaseConnection.delayed(Future(() async {
-//     try {
-//       // Usar WasmDatabase (API moderna)
-//       final result = await WasmDatabase.open(
-//         databaseName: 'cadastro_unificado_web',
-//         sqlite3Uri: Uri.parse('sqlite3.wasm'),
-//         driftWorkerUri: Uri.parse('drift_worker.dart.js'),
-//       );
-
-//       if (result.missingFeatures.isNotEmpty) {
-//         AppLogger.warning(
-//             'Algumas funcionalidades não disponíveis: ${result.missingFeatures}');
-//       }
-
-//       AppLogger.info('✅ Database Web configurado com WASM');
-//       return result.resolvedExecutor;
-//     } catch (e) {
-//       // Fallback simples para desenvolvimento
-//       AppLogger.warning('⚠️ WASM não disponível, usando fallback simples: $e');
-
-//       // Criar conexão simples para desenvolvimento
-//       return DatabaseConnection(
-//         NativeDatabase.memory(logStatements: kDebugMode),
-//         closeExecutorOnClose: true,
-//       );
-//     }
-//   }));
-// }
-
-// // Conexão MOBILE - usando NativeDatabase
-// DatabaseConnection _openMobileConnection() {
-//   AppLogger.info('📱 Configurando Drift para Mobile');
-
-//   return DatabaseConnection.delayed(Future(() async {
-//     try {
+// LazyDatabase _openConnection() => LazyDatabase(() async {
 //       final dbFolder = await getApplicationDocumentsDirectory();
 //       final file = File(p.join(dbFolder.path, 'cadastro_unificado.db'));
 
-//       AppLogger.info('📁 Database file: ${file.path}');
+//       // CORRIGIDO: Removido closeExecutorOnClose
+//       return NativeDatabase.createInBackground(file, logStatements: true);
+//     });
 
-//       // CORREÇÃO: Usar DatabaseConnection, não retornar QueryExecutor diretamente
-//       final executor = NativeDatabase.createInBackground(
-//         file,
-//         logStatements: kDebugMode,
-//         setup: (database) {
-//           database.execute('PRAGMA foreign_keys = ON');
-//           database.execute('PRAGMA journal_mode = WAL');
-//           database.execute('PRAGMA synchronous = NORMAL');
-//         },
-//       );
+// Conexão WEB - usando a API moderna
+DatabaseConnection _openWebConnection() {
+  AppLogger.info('🌐 Configurando Drift para Web');
 
-//       // Retornar como DatabaseConnection
-//       return executor;
-//     } catch (e) {
-//       AppLogger.error('❌ Erro mobile database: $e');
-//       rethrow;
-//     }
-//   }));
-// }
+  return DatabaseConnection.delayed(Future(() async {
+    try {
+      // Usar WasmDatabase (API moderna)
+      final result = await WasmDatabase.open(
+        databaseName: 'cadastro_unificado_web',
+        sqlite3Uri: Uri.parse('sqlite3.wasm'),
+        driftWorkerUri: Uri.parse('drift_worker.dart.js'),
+      );
+
+      if (result.missingFeatures.isNotEmpty) {
+        AppLogger.warning(
+            'Algumas funcionalidades não disponíveis: ${result.missingFeatures}');
+      }
+
+      AppLogger.info('✅ Database Web configurado com WASM');
+      return result.resolvedExecutor;
+    } catch (e) {
+      // Fallback simples para desenvolvimento
+      AppLogger.warning('⚠️ WASM não disponível, usando fallback simples: $e');
+
+      // Criar conexão simples para desenvolvimento
+      return DatabaseConnection(
+        NativeDatabase.memory(logStatements: kDebugMode),
+        // closeExecutorOnClose: true,
+      );
+    }
+  }));
+}
+
+// Conexão MOBILE - usando NativeDatabase
+DatabaseConnection _openMobileConnection() {
+  AppLogger.info('📱 Configurando Drift para Mobile');
+
+  return DatabaseConnection.delayed(Future(() async {
+    try {
+      final dbFolder = await getApplicationDocumentsDirectory();
+      final file = File(p.join(dbFolder.path, 'cadastro_unificado.db'));
+
+      AppLogger.info('📁 Database file: ${file.path}');
+
+      // CORREÇÃO: Usar DatabaseConnection, não retornar QueryExecutor diretamente
+      final executor = NativeDatabase.createInBackground(
+        file,
+        logStatements: kDebugMode,
+        setup: (database) {
+          database.execute('PRAGMA foreign_keys = ON');
+          database.execute('PRAGMA journal_mode = WAL');
+          database.execute('PRAGMA synchronous = NORMAL');
+        },
+      );
+
+      // Retornar como DatabaseConnection
+      // ignore: deprecated_member_use
+      return DatabaseConnection.fromExecutor(executor);
+    } catch (e) {
+      AppLogger.error('❌ Erro mobile database: $e');
+      rethrow;
+    }
+  }));
+}
