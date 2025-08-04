@@ -6,7 +6,7 @@ import 'package:material_design_icons_flutter/material_design_icons_flutter.dart
 
 import '../../../../../core/theme/app_colors.dart';
 import '../../../../../core/utils/app_utils.dart';
-import '../../../../auth/presentation/application/auth_state.dart';
+import '../../../../auth/application/auth_notifier.dart';
 
 import 'dashboard_appbar.dart';
 import 'dashboard_card.dart';

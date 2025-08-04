@@ -4,8 +4,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import '../../../../../core/config/env.dart';
 import '../../../../../core/config/notification/notification_service.dart';
 import '../../../../../core/theme/app_colors.dart';
-import '../../../../auth/presentation/application/auth_state.dart';
-import '../../../../auth/presentation/domain/entities/user.dart';
+import '../../../../auth/application/auth_notifier.dart';
 
 class DashboardAppBar extends ConsumerWidget implements PreferredSizeWidget {
   const DashboardAppBar({super.key});

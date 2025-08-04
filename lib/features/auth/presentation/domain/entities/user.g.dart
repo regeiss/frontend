@@ -20,6 +20,7 @@ _User _$UserFromJson(Map<String, dynamic> json) => $checkedCreate(
               'date_joined', (v) => DateTime.parse(v as String)),
           firstName: $checkedConvert('first_name', (v) => v as String?),
           lastName: $checkedConvert('last_name', (v) => v as String?),
+          name: $checkedConvert('name', (v) => v as String),
         );
         return val;
       },
@@ -41,6 +42,7 @@ Map<String, dynamic> _$UserToJson(_User instance) => <String, dynamic>{
       'date_joined': instance.dateJoined.toIso8601String(),
       'first_name': instance.firstName,
       'last_name': instance.lastName,
+      'name': instance.name,
     };
 
 _AuthTokens _$AuthTokensFromJson(Map<String, dynamic> json) => $checkedCreate(

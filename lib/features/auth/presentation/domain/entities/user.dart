@@ -13,7 +13,7 @@ abstract class User with _$User {
     required bool isActive, // ← Quebra de linha aqui
     required DateTime dateJoined, // ← Quebra de linha aqui
     String? firstName,
-    String? lastName,
+    String? lastName, required String name,
   }) = _User;
 
   factory User.fromJson(Map<String, dynamic> json) => _$UserFromJson(json);
