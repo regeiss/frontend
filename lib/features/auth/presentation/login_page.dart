@@ -1,24 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_form_builder/flutter_form_builder.dart';
-import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:go_router/go_router.dart';
-import 'package:hooks_riverpod/hooks_riverpod.dart';
-
-import '../../../../core/config/env.dart';
-
-import '../../../../core/theme/app_colors.dart';
-
-import '../../../core/config/notification/notification_service.dart';
-import '../../../core/utils/app_validator.dart';
-
-import 'application/auth_state.dart';
-import 'auth_text_field.dart';
-import 'social_login_buttons.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+
 import '../../../core/platform/platform_config.dart';
-import '../application/auth_notifier.dart';
+import 'application/auth_state.dart';
 
 class LoginPage extends HookConsumerWidget {
   const LoginPage({super.key});
@@ -50,8 +35,7 @@ class LoginPage extends HookConsumerWidget {
     BuildContext context,
     TextEditingController emailController,
     TextEditingController passwordController,
-  ) {
-    return Scaffold(
+  ) => Scaffold(
       appBar: AppBar(title: const Text('Login - Web')),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -79,7 +63,6 @@ class LoginPage extends HookConsumerWidget {
         ),
       ),
     );
-  }
 
   Widget _buildMobileLogin(
     BuildContext context,
@@ -87,8 +70,7 @@ class LoginPage extends HookConsumerWidget {
     AuthNotifier authNotifier,
     TextEditingController emailController,
     TextEditingController passwordController,
-  ) {
-    return Scaffold(
+  ) => Scaffold(
       appBar: AppBar(title: const Text('Login - Mobile')),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -104,7 +86,7 @@ class LoginPage extends HookConsumerWidget {
               obscureText: true,
             ),
             const SizedBox(height: 20),
-            if (authState.isLoading)
+            if (authState.loading)
               const CircularProgressIndicator()
             else
               ElevatedButton(
@@ -123,7 +105,6 @@ class LoginPage extends HookConsumerWidget {
         ),
       ),
     );
-  }
 
   Future<void> _handleWebLogin(
     BuildContext context,
