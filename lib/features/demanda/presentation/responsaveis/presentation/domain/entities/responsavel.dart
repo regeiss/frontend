@@ -63,7 +63,9 @@ extension ResponsavelExtension on Responsavel {
   }
   
   String get telefoneFormatado {
-    if (telefone == null) return '';
+    if (telefone == null) {
+      return '';
+    }
     
     final telefoneStr = telefone.toString();
     if (telefoneStr.length == 11) {
@@ -76,17 +78,23 @@ extension ResponsavelExtension on Responsavel {
   }
   
   String get cpfFormatado {
-    if (cpf.length != 11) return cpf;
+    if (cpf.length != 11) {
+      return cpf;
+    }
     return '${cpf.substring(0, 3)}.${cpf.substring(3, 6)}.${cpf.substring(6, 9)}-${cpf.substring(9)}';
   }
   
   String get cepFormatado {
-    if (cep.length != 8) return cep;
+    if (cep.length != 8) {
+      return cep;
+    }
     return '${cep.substring(0, 5)}-${cep.substring(5)}';
   }
   
   int? get idade {
-    if (dataNasc == null) return null;
+    if (dataNasc == null) {
+      return null;
+    }
     
     final now = DateTime.now();
     var age = now.year - dataNasc!.year;

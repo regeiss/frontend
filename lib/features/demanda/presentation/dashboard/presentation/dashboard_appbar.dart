@@ -3,12 +3,38 @@ import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import '../../../../auth/presentation/application/auth_state.dart';
+import '../../../../auth/presentation/domain/entities/user.dart';
 
 class DashboardAppBar extends ConsumerWidget implements PreferredSizeWidget {
   const DashboardAppBar({super.key});
 
   @override
   Size get preferredSize => const Size.fromHeight(kToolbarHeight);
+
+  String _getUserInitials(User user) {
+    final parts = <String>[];
+    if (user.firstName != null && user.firstName!.isNotEmpty) {
+      parts.add(user.firstName!.substring(0, 1).toUpperCase());
+    }
+    if (user.lastName != null && user.lastName!.isNotEmpty) {
+      parts.add(user.lastName!.substring(0, 1).toUpperCase());
+    }
+    if (parts.isEmpty) {
+      parts.add(user.username.substring(0, 1).toUpperCase());
+    }
+    return parts.join();
+  }
+
+  String _getUserFullName(User user) {
+    final parts = <String>[];
+    if (user.firstName != null && user.firstName!.isNotEmpty) {
+      parts.add(user.firstName!);
+    }
+    if (user.lastName != null && user.lastName!.isNotEmpty) {
+      parts.add(user.lastName!);
+    }
+    return parts.isNotEmpty ? parts.join(' ') : user.username;
+  }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -27,15 +53,16 @@ class DashboardAppBar extends ConsumerWidget implements PreferredSizeWidget {
             );
           },
         ),
-        
+
         // ✅ CORRIGIDO - maybeWhen com orElse obrigatório
         authState.maybeWhen(
           authenticated: (user) => PopupMenuButton<String>(
             icon: CircleAvatar(
-              backgroundColor: Colors.white.withOpacity(0.2),
+              backgroundColor: Colors.white.withValues(alpha: 0.2),
               child: Text(
-                user.initials,
-                style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                _getUserInitials(user),
+                style: const TextStyle(
+                    color: Colors.white, fontWeight: FontWeight.bold),
               ),
             ),
             onSelected: (value) {
@@ -47,7 +74,7 @@ class DashboardAppBar extends ConsumerWidget implements PreferredSizeWidget {
             itemBuilder: (context) => [
               PopupMenuItem(
                 value: 'profile',
-                child: Text('Olá, ${user.displayName}'),
+                child: Text('Olá, ${_getUserFullName(user)}'),
               ),
               const PopupMenuItem(
                 value: 'logout',
@@ -63,7 +90,7 @@ class DashboardAppBar extends ConsumerWidget implements PreferredSizeWidget {
           ),
           orElse: () => const SizedBox.shrink(), // ✅ OBRIGATÓRIO
         ),
-        
+
         const SizedBox(width: 8),
       ],
     );

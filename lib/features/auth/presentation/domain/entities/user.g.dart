@@ -14,13 +14,13 @@ _User _$UserFromJson(Map<String, dynamic> json) => $checkedCreate(
           id: $checkedConvert('id', (v) => (v as num).toInt()),
           username: $checkedConvert('username', (v) => v as String),
           email: $checkedConvert('email', (v) => v as String),
-          isStaff: $checkedConvert('is_staff', (v) => v as bool),
-          isActive: $checkedConvert('is_active', (v) => v as bool),
+          isStaff: $checkedConvert('is_staff', (v) => v as bool?),
+          isActive: $checkedConvert('is_active', (v) => v as bool?),
           dateJoined: $checkedConvert(
               'date_joined', (v) => DateTime.parse(v as String)),
+          name: $checkedConvert('name', (v) => v as String),
           firstName: $checkedConvert('first_name', (v) => v as String?),
           lastName: $checkedConvert('last_name', (v) => v as String?),
-          name: $checkedConvert('name', (v) => v as String),
         );
         return val;
       },
@@ -40,9 +40,9 @@ Map<String, dynamic> _$UserToJson(_User instance) => <String, dynamic>{
       'is_staff': instance.isStaff,
       'is_active': instance.isActive,
       'date_joined': instance.dateJoined.toIso8601String(),
+      'name': instance.name,
       'first_name': instance.firstName,
       'last_name': instance.lastName,
-      'name': instance.name,
     };
 
 _AuthTokens _$AuthTokensFromJson(Map<String, dynamic> json) => $checkedCreate(

@@ -59,11 +59,18 @@ class AuthNotifier extends StateNotifier<AuthState> {
 
       final authTokens = await _authRepository.login(loginRequest);
 
-      // Save tokens and user data
-      await _saveAuthData(authTokens);
+      // Save tokens
+      await SecureStorage.saveAccessToken(authTokens.accessToken);
+      await SecureStorage.saveRefreshToken(authTokens.refreshToken);
 
-      state = AuthState.authenticated(authTokens.user);
-      AppLogger.info('Login successful for user: ${authTokens.user.username}');
+      // Fetch complete user profile
+      final userProfile = await _authRepository.getUserProfile();
+
+      // Save complete user data
+      await _saveUserData(userProfile);
+
+      state = AuthState.authenticated(userProfile);
+      AppLogger.info('Login successful for user: ${userProfile.username}');
     } on NetworkExceptions catch (e) {
       final errorMessage = NetworkExceptions.getErrorMessage(e);
       AppLogger.error('Login failed with network error: $errorMessage');

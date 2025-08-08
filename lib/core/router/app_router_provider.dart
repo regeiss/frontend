@@ -20,6 +20,7 @@ import '../config/logging/app_logger.dart';
 import '../storage/secure_storage.dart';
 
 final appRouterProvider = Provider<GoRouter>((ref) {
+  // ignore: unused_local_variable
   final authState = ref.watch(authNotifierProvider);
   
   return GoRouter(

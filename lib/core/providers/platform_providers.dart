@@ -10,14 +10,15 @@ final stateManagerProvider = Provider<StateManager>((ref) {
   return WebStateManager(ref);
 });
 
+// ignore: one_member_abstracts
 abstract class StateManager {
   void dispose();
 }
 
 class MobileStateManager implements StateManager {
-  final Ref ref;
   
   MobileStateManager(this.ref);
+  final Ref ref;
   
   @override
   void dispose() {
@@ -26,9 +27,9 @@ class MobileStateManager implements StateManager {
 }
 
 class WebStateManager implements StateManager {
-  final Ref ref;
   
   WebStateManager(this.ref);
+  final Ref ref;
   
   @override
   void dispose() {

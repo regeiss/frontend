@@ -62,7 +62,9 @@ class LoggingInterceptor extends Interceptor {
   }
 
   String _formatData(dynamic data) {
-    if (data == null) return 'null';
+    if (data == null) {
+      return 'null';
+    }
     
     if (data is Map || data is List) {
       final dataStr = data.toString();

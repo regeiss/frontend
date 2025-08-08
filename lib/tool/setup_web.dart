@@ -15,6 +15,7 @@ void main() async {
   print('🚀 Configurando Drift para Web...');
 
   final webDir = Directory('web');
+  // ignore: avoid_slow_async_io
   if (!await webDir.exists()) {
     await webDir.create();
     print('📁 Criado diretório web/');

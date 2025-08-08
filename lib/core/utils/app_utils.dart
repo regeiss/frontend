@@ -1,14 +1,20 @@
+// ignore_for_file: omit_local_variable_types
+
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 class AppUtils {
   // Date formatting
-  static String formatDate(DateTime date, {String pattern = 'dd/MM/yyyy'}) => DateFormat(pattern, 'pt_BR').format(date);
+  static String formatDate(DateTime date, {String pattern = 'dd/MM/yyyy'}) =>
+      DateFormat(pattern, 'pt_BR').format(date);
 
-  static String formatDateTime(DateTime dateTime, {String pattern = 'dd/MM/yyyy HH:mm'}) => DateFormat(pattern, 'pt_BR').format(dateTime);
+  static String formatDateTime(DateTime dateTime,
+          {String pattern = 'dd/MM/yyyy HH:mm'}) =>
+      DateFormat(pattern, 'pt_BR').format(dateTime);
 
-  static String formatTime(DateTime time, {String pattern = 'HH:mm'}) => DateFormat(pattern, 'pt_BR').format(time);
+  static String formatTime(DateTime time, {String pattern = 'HH:mm'}) =>
+      DateFormat(pattern, 'pt_BR').format(time);
 
   static DateTime? parseDate(String date, {String pattern = 'dd/MM/yyyy'}) {
     try {
@@ -19,96 +25,118 @@ class AppUtils {
   }
 
   // Number formatting
-  static String formatCurrency(double value) => NumberFormat.currency(locale: 'pt_BR', symbol: 'R\$').format(value);
+  static String formatCurrency(double value) =>
+      NumberFormat.currency(locale: 'pt_BR', symbol: 'R\$').format(value);
 
-  static String formatNumber(double value, {int decimalDigits = 2}) => NumberFormat.decimalPattern('pt_BR').format(value);
+  static String formatNumber(double value, {int decimalDigits = 2}) =>
+      NumberFormat.decimalPattern('pt_BR').format(value);
 
   // CPF/CNPJ formatting and validation
   static String formatCpf(String cpf) {
-    cpf = cpf.replaceAll(RegExp(r'\D'), '');
-    if (cpf.length != 11) return cpf;
-    return '${cpf.substring(0, 3)}.${cpf.substring(3, 6)}.${cpf.substring(6, 9)}-${cpf.substring(9)}';
+    final String cleanCpf = cpf.replaceAll(RegExp(r'\D'), '');
+    if (cleanCpf.length != 11) {
+      return cleanCpf;
+    }
+    return '${cleanCpf.substring(0, 3)}.${cleanCpf.substring(3, 6)}.${cleanCpf.substring(6, 9)}-${cleanCpf.substring(9)}';
   }
 
   static String formatCnpj(String cnpj) {
-    cnpj = cnpj.replaceAll(RegExp(r'\D'), '');
-    if (cnpj.length != 14) return cnpj;
-    return '${cnpj.substring(0, 2)}.${cnpj.substring(2, 5)}.${cnpj.substring(5, 8)}/${cnpj.substring(8, 12)}-${cnpj.substring(12)}';
+    final String cleanCnpj = cnpj.replaceAll(RegExp(r'\D'), '');
+    if (cleanCnpj.length != 14) {
+      return cleanCnpj;
+    }
+    return '${cleanCnpj.substring(0, 2)}.${cleanCnpj.substring(2, 5)}.${cleanCnpj.substring(5, 8)}/${cleanCnpj.substring(8, 12)}-${cleanCnpj.substring(12)}';
   }
 
   static String unformatCpf(String cpf) => cpf.replaceAll(RegExp(r'\D'), '');
 
   static bool isValidCpf(String cpf) {
-    cpf = unformatCpf(cpf);
-    
-    if (cpf.length != 11) return false;
-    
+    final String cleanCpf = unformatCpf(cpf);
+
+    if (cleanCpf.length != 11) {
+      return false;
+    }
+
     // Check for known invalid CPFs
-    if (RegExp(r'^(\d)\1{10}$').hasMatch(cpf)) return false;
-    
+    if (RegExp(r'^(\d)\1{10}$').hasMatch(cleanCpf)) {
+      return false;
+    }
+
     // Validate first check digit
     var sum = 0;
     for (var i = 0; i < 9; i++) {
-      sum += int.parse(cpf[i]) * (10 - i);
+      sum += int.parse(cleanCpf[i]) * (10 - i);
     }
     var remainder = sum % 11;
     final firstDigit = remainder < 2 ? 0 : 11 - remainder;
-    
-    if (int.parse(cpf[9]) != firstDigit) return false;
-    
+
+    if (int.parse(cleanCpf[9]) != firstDigit) {
+      return false;
+    }
+
     // Validate second check digit
     sum = 0;
     for (var i = 0; i < 10; i++) {
-      sum += int.parse(cpf[i]) * (11 - i);
+      sum += int.parse(cleanCpf[i]) * (11 - i);
     }
     remainder = sum % 11;
     final secondDigit = remainder < 2 ? 0 : 11 - remainder;
-    
-    return int.parse(cpf[10]) == secondDigit;
+
+    return int.parse(cleanCpf[10]) == secondDigit;
   }
 
   // Phone formatting
   static String formatPhone(String phone) {
-    phone = phone.replaceAll(RegExp(r'\D'), '');
-    
-    if (phone.length == 11) {
-      return '(${phone.substring(0, 2)}) ${phone.substring(2, 7)}-${phone.substring(7)}';
-    } else if (phone.length == 10) {
-      return '(${phone.substring(0, 2)}) ${phone.substring(2, 6)}-${phone.substring(6)}';
+    final String cleanPhone = phone.replaceAll(RegExp(r'\D'), '');
+
+    if (cleanPhone.length == 11) {
+      return '(${cleanPhone.substring(0, 2)}) ${cleanPhone.substring(2, 7)}-${cleanPhone.substring(7)}';
+    } else if (cleanPhone.length == 10) {
+      return '(${cleanPhone.substring(0, 2)}) ${cleanPhone.substring(2, 6)}-${cleanPhone.substring(6)}';
     }
-    
-    return phone;
+
+    return cleanPhone;
   }
 
-  static String unformatPhone(String phone) => phone.replaceAll(RegExp(r'\D'), '');
+  static String unformatPhone(String phone) =>
+      phone.replaceAll(RegExp(r'\D'), '');
 
   // CEP formatting
   static String formatCep(String cep) {
-    cep = cep.replaceAll(RegExp(r'\D'), '');
-    if (cep.length != 8) return cep;
-    return '${cep.substring(0, 5)}-${cep.substring(5)}';
+    final String cleanCep = cep.replaceAll(RegExp(r'\D'), '');
+    if (cleanCep.length != 8) {
+      return cleanCep;
+    }
+    return '${cleanCep.substring(0, 5)}-${cleanCep.substring(5)}';
   }
 
   static String unformatCep(String cep) => cep.replaceAll(RegExp(r'\D'), '');
 
   static bool isValidCep(String cep) {
-    cep = unformatCep(cep);
-    return cep.length == 8 && RegExp(r'^\d{8}$').hasMatch(cep);
+    final String cleanCep = unformatCep(cep);
+    return cleanCep.length == 8 && RegExp(r'^\d{8}$').hasMatch(cleanCep);
   }
 
   // Email validation
-  static bool isValidEmail(String email) => RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(email);
+  static bool isValidEmail(String email) =>
+      RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(email);
 
   // String utilities
   static String capitalize(String text) {
-    if (text.isEmpty) return text;
+    if (text.isEmpty) {
+      return text;
+    }
     return text[0].toUpperCase() + text.substring(1).toLowerCase();
   }
 
-  static String capitalizeWords(String text) => text.split(' ').map(capitalize).join(' ');
+  static String capitalizeWords(String text) =>
+      text.split(' ').map(capitalize).join(' ');
 
-  static String truncateText(String text, int maxLength, {String suffix = '...'}) {
-    if (text.length <= maxLength) return text;
+  static String truncateText(String text, int maxLength,
+      {String suffix = '...'}) {
+    if (text.length <= maxLength) {
+      return text;
+    }
     return text.substring(0, maxLength - suffix.length) + suffix;
   }
 
@@ -154,14 +182,16 @@ class AppUtils {
   }
 
   // Screen size utilities
-  static bool isMobile(BuildContext context) => MediaQuery.of(context).size.width < 768;
+  static bool isMobile(BuildContext context) =>
+      MediaQuery.of(context).size.width < 768;
 
   static bool isTablet(BuildContext context) {
     final width = MediaQuery.of(context).size.width;
     return width >= 768 && width < 1024;
   }
 
-  static bool isDesktop(BuildContext context) => MediaQuery.of(context).size.width >= 1024;
+  static bool isDesktop(BuildContext context) =>
+      MediaQuery.of(context).size.width >= 1024;
 
   // Debug utilities
   static void logBuildMethod(String widgetName) {
@@ -176,12 +206,12 @@ class AppUtils {
   static int calculateAge(DateTime birthDate) {
     final now = DateTime.now();
     var age = now.year - birthDate.year;
-    
-    if (now.month < birthDate.month || 
+
+    if (now.month < birthDate.month ||
         (now.month == birthDate.month && now.day < birthDate.day)) {
       age--;
     }
-    
+
     return age;
   }
 
@@ -209,17 +239,25 @@ class AppUtils {
 
   // File size formatter
   static String formatFileSize(int bytes) {
-    if (bytes < 1024) return '$bytes B';
-    if (bytes < 1024 * 1024) return '${(bytes / 1024).toStringAsFixed(1)} KB';
-    if (bytes < 1024 * 1024 * 1024) return '${(bytes / (1024 * 1024)).toStringAsFixed(1)} MB';
+    if (bytes < 1024) {
+      return '$bytes B';
+    }
+    if (bytes < 1024 * 1024) {
+      return '${(bytes / 1024).toStringAsFixed(1)} KB';
+    }
+    if (bytes < 1024 * 1024 * 1024) {
+      return '${(bytes / (1024 * 1024)).toStringAsFixed(1)} MB';
+    }
     return '${(bytes / (1024 * 1024 * 1024)).toStringAsFixed(1)} GB';
   }
 
   // Generate random string
   static String generateRandomString(int length) {
-    const chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+    const chars =
+        'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
     final random = DateTime.now().millisecondsSinceEpoch;
-    return List.generate(length, (index) => chars[random % chars.length]).join();
+    return List.generate(length, (index) => chars[random % chars.length])
+        .join();
   }
 
   // Deep copy list

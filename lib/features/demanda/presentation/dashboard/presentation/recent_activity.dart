@@ -9,7 +9,7 @@ class RecentActivity extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // TODO: Replace with actual data from providers
+    // TODO(robertogeiss): Replace with actual data from providers
     final activities = [
       _ActivityItem(
         title: 'Novo responsável cadastrado',
@@ -64,15 +64,13 @@ class RecentActivity extends StatelessWidget {
             ),
             TextButton(
               onPressed: () {
-                // TODO: Navigate to full activity log
+                // TODO(robertogeiss): Navigate to full activity log
               },
               child: const Text('Ver todas'),
             ),
           ],
         ),
-        
         const SizedBox(height: 16),
-        
         Container(
           decoration: BoxDecoration(
             color: Colors.white,
@@ -98,68 +96,67 @@ class RecentActivity extends StatelessWidget {
   }
 
   Widget _buildActivityItem(_ActivityItem activity) => Padding(
-      padding: const EdgeInsets.all(16),
-      child: Row(
-        children: [
-          // Icon
-          Container(
-            padding: const EdgeInsets.all(8),
-            decoration: BoxDecoration(
-              color: activity.color.withOpacity(0.1),
-              borderRadius: BorderRadius.circular(8),
+        padding: const EdgeInsets.all(16),
+        child: Row(
+          children: [
+            // Icon
+            Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: activity.color.withValues(alpha: 0.1),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Icon(
+                activity.icon,
+                color: activity.color,
+                size: 20,
+              ),
             ),
-            child: Icon(
-              activity.icon,
-              color: activity.color,
-              size: 20,
-            ),
-          ),
-          
-          const SizedBox(width: 12),
-          
-          // Content
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  activity.title,
-                  style: const TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w600,
-                    color: AppColors.textPrimaryColor,
+
+            const SizedBox(width: 12),
+
+            // Content
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    activity.title,
+                    style: const TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
+                      color: AppColors.textPrimaryColor,
+                    ),
                   ),
-                ),
-                const SizedBox(height: 2),
-                Text(
-                  activity.subtitle,
-                  style: const TextStyle(
-                    fontSize: 12,
-                    color: AppColors.textSecondaryColor,
+                  const SizedBox(height: 2),
+                  Text(
+                    activity.subtitle,
+                    style: const TextStyle(
+                      fontSize: 12,
+                      color: AppColors.textSecondaryColor,
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
-          
-          const SizedBox(width: 8),
-          
-          // Time
-          Text(
-            AppUtils.getTimeAgo(activity.time),
-            style: const TextStyle(
-              fontSize: 11,
-              color: AppColors.textTertiaryColor,
-              fontWeight: FontWeight.w500,
+
+            const SizedBox(width: 8),
+
+            // Time
+            Text(
+              AppUtils.getTimeAgo(activity.time),
+              style: const TextStyle(
+                fontSize: 11,
+                color: AppColors.textTertiaryColor,
+                fontWeight: FontWeight.w500,
+              ),
             ),
-          ),
-        ],
-      ),
-    );
+          ],
+        ),
+      );
 }
 
 class _ActivityItem {
-
   _ActivityItem({
     required this.title,
     required this.subtitle,

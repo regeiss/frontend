@@ -5,13 +5,14 @@ import 'package:logger/logger.dart';
 
 import '../env.dart';
 
-
 class AppLogger {
   static late Logger _logger;
   static bool _initialized = false;
 
   static void init() {
-    if (_initialized) return;
+    if (_initialized) {
+      return;
+    }
 
     _logger = Logger(
       filter: _AppLogFilter(),
@@ -21,7 +22,7 @@ class AppLogger {
         lineLength: 120,
         colors: true,
         printEmojis: true,
-        printTime: true,
+        dateTimeFormat: DateTimeFormat.onlyTimeAndSinceStart,
       ),
       output: _AppLogOutput(),
     );
@@ -31,24 +32,32 @@ class AppLogger {
   }
 
   static void debug(String message, [Object? error, StackTrace? stackTrace]) {
-    if (!_initialized) return;
+    if (!_initialized) {
+      return;
+    }
     _logger.d(message, error: error, stackTrace: stackTrace);
   }
 
   static void info(String message, [Object? error, StackTrace? stackTrace]) {
-    if (!_initialized) return;
+    if (!_initialized) {
+      return;
+    }
     _logger.i(message, error: error, stackTrace: stackTrace);
   }
 
   static void warning(String message, [Object? error, StackTrace? stackTrace]) {
-    if (!_initialized) return;
+    if (!_initialized) {
+      return;
+    }
     _logger.w(message, error: error, stackTrace: stackTrace);
   }
 
   static void error(String message, [Object? error, StackTrace? stackTrace]) {
-    if (!_initialized) return;
+    if (!_initialized) {
+      return;
+    }
     _logger.e(message, error: error, stackTrace: stackTrace);
-    
+
     // Send to Crashlytics in production
     if (Env.enableCrashlytics && !kDebugMode) {
       FirebaseCrashlytics.instance.recordError(
@@ -60,9 +69,11 @@ class AppLogger {
   }
 
   static void fatal(String message, [Object? error, StackTrace? stackTrace]) {
-    if (!_initialized) return;
+    if (!_initialized) {
+      return;
+    }
     _logger.f(message, error: error, stackTrace: stackTrace);
-    
+
     // Send to Crashlytics
     if (Env.enableCrashlytics && !kDebugMode) {
       FirebaseCrashlytics.instance.recordError(
@@ -74,27 +85,40 @@ class AppLogger {
   }
 
   // Network logging
-  static void network(String message, {
+  static void network(
+    String message, {
     String? method,
     String? url,
     int? statusCode,
     Object? data,
   }) {
-    if (!_initialized) return;
-    
+    if (!_initialized) {
+      return;
+    }
+
     final logMessage = StringBuffer(message);
-    if (method != null) logMessage.write(' [$method]');
-    if (url != null) logMessage.write(' $url');
-    if (statusCode != null) logMessage.write(' ($statusCode)');
-    if (data != null) logMessage.write('\nData: $data');
-    
+    if (method != null) {
+      logMessage.write(' [$method]');
+    }
+    if (url != null) {
+      logMessage.write(' $url');
+    }
+    if (statusCode != null) {
+      logMessage.write(' ($statusCode)');
+    }
+    if (data != null) {
+      logMessage.write('\nData: $data');
+    }
+
     _logger.i(logMessage.toString());
   }
 
   // Analytics logging
   static void analytics(String event, Map<String, Object?>? parameters) {
-    if (!_initialized) return;
-    
+    if (!_initialized) {
+      return;
+    }
+
     final message = 'Analytics Event: $event';
     if (parameters?.isNotEmpty == true) {
       _logger.i('$message\nParameters: $parameters');
@@ -107,8 +131,12 @@ class AppLogger {
 class _AppLogFilter extends LogFilter {
   @override
   bool shouldLog(LogEvent event) {
-    if (!Env.enableLogging) return false;
-    if (kReleaseMode && event.level.index < Level.info.index) return false;
+    if (!Env.enableLogging) {
+      return false;
+    }
+    if (kReleaseMode && event.level.index < Level.info.index) {
+      return false;
+    }
     return true;
   }
 }

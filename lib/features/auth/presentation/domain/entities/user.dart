@@ -1,3 +1,5 @@
+// ignore_for_file: always_put_required_named_parameters_first
+
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'user.freezed.dart';
@@ -9,18 +11,20 @@ abstract class User with _$User {
     required int id,
     required String username,
     required String email,
-    required bool isStaff, // ← Quebra de linha aqui
-    required bool isActive, // ← Quebra de linha aqui
-    required DateTime dateJoined, // ← Quebra de linha aqui
+    bool? isStaff, // Made nullable to handle API response
+    bool? isActive, // Made nullable to handle API response
+    required DateTime dateJoined,
+    required String name,
     String? firstName,
-    String? lastName, required String name,
+    String? lastName,
   }) = _User;
 
   factory User.fromJson(Map<String, dynamic> json) => _$UserFromJson(json);
 }
 
 @freezed
-abstract class AuthTokens with _$AuthTokens { // Construtor privado para extensões
+abstract class AuthTokens with _$AuthTokens {
+  // Construtor privado para extensões
 
   const factory AuthTokens({
     required String accessToken,

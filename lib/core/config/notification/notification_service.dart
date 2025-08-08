@@ -1,5 +1,7 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+
 import '../../theme/app_colors.dart';
 import '../logging/app_logger.dart';
 
@@ -14,11 +16,20 @@ class NotificationService {
   static bool _initialized = false;
 
   static Future<void> initialize() async {
-    if (_initialized) return;
+    if (_initialized) {
+      return;
+    }
 
     // Initialize toast configuration
-    await Fluttertoast.cancel();
-    
+    // Note: Fluttertoast.cancel() is not supported on web platform
+    if (!kIsWeb) {
+      try {
+        await Fluttertoast.cancel();
+      } catch (e) {
+        AppLogger.info('Fluttertoast.cancel() not available on this platform');
+      }
+    }
+
     _initialized = true;
     AppLogger.info('NotificationService initialized');
   }
@@ -30,22 +41,30 @@ class NotificationService {
     ToastGravity gravity = ToastGravity.BOTTOM,
     int timeInSecForIosWeb = 3,
   }) async {
-    if (!_initialized) await initialize();
+    if (!_initialized) {
+      await initialize();
+    }
 
     final backgroundColor = _getBackgroundColor(type);
     final textColor = _getTextColor(type);
 
-    await Fluttertoast.showToast(
-      msg: message,
-      toastLength: Toast.LENGTH_LONG,
-      gravity: gravity,
-      timeInSecForIosWeb: timeInSecForIosWeb,
-      backgroundColor: backgroundColor,
-      textColor: textColor,
-      fontSize: 16,
-    );
+    try {
+      await Fluttertoast.showToast(
+        msg: message,
+        toastLength: Toast.LENGTH_LONG,
+        gravity: gravity,
+        timeInSecForIosWeb: timeInSecForIosWeb,
+        backgroundColor: backgroundColor,
+        textColor: textColor,
+        fontSize: 16,
+      );
 
-    AppLogger.info('Toast shown: $message (Type: $type)');
+      AppLogger.info('Toast shown: $message (Type: $type)');
+    } catch (e) {
+      // Fallback for web platform issues
+      AppLogger.warning('Toast failed, using fallback: $e');
+      // You could implement a web-specific toast here if needed
+    }
   }
 
   static Future<void> showSuccess(String message) async {
@@ -187,38 +206,39 @@ class NotificationService {
       context: context,
       barrierDismissible: false,
       builder: (context) => AlertDialog(
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-          title: Row(
-            children: [
-              Icon(iconData, color: iconColor, size: 28),
-              const SizedBox(width: 12),
-              Expanded(
-                child: Text(
-                  title,
-                  style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
-                ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        title: Row(
+          children: [
+            Icon(iconData, color: iconColor, size: 28),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Text(
+                title,
+                style:
+                    const TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
               ),
-            ],
-          ),
-          content: Text(
-            message,
-            style: const TextStyle(fontSize: 16),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(false),
-              child: Text(cancelText),
-            ),
-            ElevatedButton(
-              onPressed: () => Navigator.of(context).pop(true),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: iconColor,
-                foregroundColor: Colors.white,
-              ),
-              child: Text(confirmText),
             ),
           ],
         ),
+        content: Text(
+          message,
+          style: const TextStyle(fontSize: 16),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(false),
+            child: Text(cancelText),
+          ),
+          ElevatedButton(
+            onPressed: () => Navigator.of(context).pop(true),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: iconColor,
+              foregroundColor: Colors.white,
+            ),
+            child: Text(confirmText),
+          ),
+        ],
+      ),
     );
   }
 
@@ -236,34 +256,35 @@ class NotificationService {
       context: context,
       barrierDismissible: false,
       builder: (context) => AlertDialog(
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-          title: Row(
-            children: [
-              Icon(iconData, color: iconColor, size: 28),
-              const SizedBox(width: 12),
-              Expanded(
-                child: Text(
-                  title,
-                  style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
-                ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        title: Row(
+          children: [
+            Icon(iconData, color: iconColor, size: 28),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Text(
+                title,
+                style:
+                    const TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
               ),
-            ],
-          ),
-          content: Text(
-            message,
-            style: const TextStyle(fontSize: 16),
-          ),
-          actions: [
-            ElevatedButton(
-              onPressed: () => Navigator.of(context).pop(),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: iconColor,
-                foregroundColor: Colors.white,
-              ),
-              child: Text(buttonText),
             ),
           ],
         ),
+        content: Text(
+          message,
+          style: const TextStyle(fontSize: 16),
+        ),
+        actions: [
+          ElevatedButton(
+            onPressed: () => Navigator.of(context).pop(),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: iconColor,
+              foregroundColor: Colors.white,
+            ),
+            child: Text(buttonText),
+          ),
+        ],
+      ),
     );
   }
 
@@ -305,20 +326,20 @@ class NotificationService {
       context: context,
       barrierDismissible: false,
       builder: (context) => AlertDialog(
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const CircularProgressIndicator(),
-              const SizedBox(height: 16),
-              Text(
-                message,
-                style: const TextStyle(fontSize: 16),
-                textAlign: TextAlign.center,
-              ),
-            ],
-          ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const CircularProgressIndicator(),
+            const SizedBox(height: 16),
+            Text(
+              message,
+              style: const TextStyle(fontSize: 16),
+              textAlign: TextAlign.center,
+            ),
+          ],
         ),
+      ),
     );
   }
 

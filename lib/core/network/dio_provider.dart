@@ -1,6 +1,7 @@
-// ignore_for_file: only_throw_errors
+// ignore_for_file: only_throw_errors, prefer_expression_function_bodies
 
 import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import '../config/env.dart';
@@ -27,15 +28,31 @@ class DioClient {
   }
 
   static void _initialize() {
+    // For web development, we'll use a different approach
+    var baseUrl = Env.apiBaseUrl;
+
+    // Check if running on web
+    if (kIsWeb) {
+      AppLogger.info('Running on web - CORS restrictions may apply');
+      AppLogger.info(
+          'Consider testing on mobile or using a local development server');
+    }
+
     _dio = Dio(
       BaseOptions(
-        baseUrl: Env.apiBaseUrl,
+        baseUrl: baseUrl,
         connectTimeout: const Duration(milliseconds: Env.apiTimeout),
         receiveTimeout: const Duration(milliseconds: Env.apiTimeout),
         sendTimeout: const Duration(milliseconds: Env.apiTimeout),
         headers: {
           'Content-Type': 'application/json',
           'Accept': 'application/json',
+          'Accept-Language': 'pt-BR,pt;q=0.9,en;q=0.8',
+          'User-Agent': 'CadastroUnificado/1.0.0',
+        },
+        validateStatus: (status) {
+          // Don't throw for 401, let the app handle it
+          return status != null && status < 500;
         },
       ),
     );

@@ -12,7 +12,7 @@ class QuickActions extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isMobile = AppUtils.isMobile(context);
-    
+
     final actions = [
       _QuickAction(
         title: 'Novo Responsável',
@@ -36,7 +36,8 @@ class QuickActions extends StatelessWidget {
         title: 'Relatórios',
         icon: MdiIcons.chartBox,
         color: AppColors.infoColor,
-        onTap: () => NotificationService.showInfo('Relatórios em desenvolvimento'),
+        onTap: () =>
+            NotificationService.showInfo('Relatórios em desenvolvimento'),
       ),
       _QuickAction(
         title: 'Buscar CPF',
@@ -48,7 +49,8 @@ class QuickActions extends StatelessWidget {
         title: 'Sincronizar',
         icon: MdiIcons.send,
         color: AppColors.secondaryColor,
-        onTap: () => NotificationService.showInfo('Sincronização em desenvolvimento'),
+        onTap: () =>
+            NotificationService.showInfo('Sincronização em desenvolvimento'),
       ),
     ];
 
@@ -63,9 +65,7 @@ class QuickActions extends StatelessWidget {
             color: AppColors.textPrimaryColor,
           ),
         ),
-        
         const SizedBox(height: 16),
-        
         if (isMobile) ...[
           // Mobile: 3 columns
           for (int i = 0; i < actions.length; i += 3)
@@ -99,51 +99,49 @@ class QuickActions extends StatelessWidget {
   }
 
   Widget _buildActionButton(_QuickAction action) => Material(
-      color: Colors.white,
-      borderRadius: BorderRadius.circular(12),
-      child: InkWell(
-        onTap: action.onTap,
+        color: Colors.white,
         borderRadius: BorderRadius.circular(12),
-        child: Container(
-          padding: const EdgeInsets.all(16),
-          decoration: BoxDecoration(
-            border: Border.all(color: AppColors.borderColor),
-            borderRadius: BorderRadius.circular(12),
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Container(
-                padding: const EdgeInsets.all(12),
-                decoration: BoxDecoration(
-                  color: action.color.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(12),
+        child: InkWell(
+          onTap: action.onTap,
+          borderRadius: BorderRadius.circular(12),
+          child: Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              border: Border.all(color: AppColors.borderColor),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: action.color.withValues(alpha: 0.1),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Icon(
+                    action.icon,
+                    color: action.color,
+                    size: 24,
+                  ),
                 ),
-                child: Icon(
-                  action.icon,
-                  color: action.color,
-                  size: 24,
+                const SizedBox(height: 8),
+                Text(
+                  action.title,
+                  style: const TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w600,
+                    color: AppColors.textPrimaryColor,
+                  ),
+                  textAlign: TextAlign.center,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
                 ),
-              ),
-              
-              const SizedBox(height: 8),
-              
-              Text(
-                action.title,
-                style: const TextStyle(
-                  fontSize: 12,
-                  fontWeight: FontWeight.w600,
-                  color: AppColors.textPrimaryColor,
-                ),
-                textAlign: TextAlign.center,
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-              ),
-            ],
+              ],
+            ),
           ),
         ),
-      ),
-    );
+      );
 
   void _showSearchDialog(BuildContext context) {
     showDialog(
@@ -160,7 +158,7 @@ class QuickActions extends StatelessWidget {
           onSubmitted: (value) {
             Navigator.of(context).pop();
             if (value.isNotEmpty) {
-              // TODO: Implement search functionality
+              // TODO(robertogeiss): Implement search functionality
               NotificationService.showInfo('Busca por CPF: $value');
             }
           },
@@ -184,7 +182,6 @@ class QuickActions extends StatelessWidget {
 }
 
 class _QuickAction {
-
   _QuickAction({
     required this.title,
     required this.icon,

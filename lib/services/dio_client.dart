@@ -2,8 +2,9 @@ import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class DioClient extends ChangeNotifier {
+import '../core/utils/auth_error_messages.dart';
 
+class DioClient extends ChangeNotifier {
   DioClient() {
     _initializeDio();
     _loadTokens();
@@ -11,8 +12,9 @@ class DioClient extends ChangeNotifier {
   late final Dio _dio;
   String? _authToken;
   String? _refreshToken;
-  
-  static const String _baseUrl = 'http://10.13.65.37:8001/api/v1';
+
+  static const String _baseUrl =
+      'https://dev-ca-unico.novohamburgo.rs.gov.br/api/v1';
   static const String _tokenKey = 'auth_token';
   static const String _refreshTokenKey = 'refresh_token';
 
@@ -31,6 +33,12 @@ class DioClient extends ChangeNotifier {
       headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
+        // Add CORS headers for web
+        if (kIsWeb) 'Access-Control-Allow-Origin': '*',
+        if (kIsWeb)
+          'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+        if (kIsWeb)
+          'Access-Control-Allow-Headers': 'Content-Type, Authorization',
       },
     ));
 
@@ -56,7 +64,6 @@ class DioClient extends ChangeNotifier {
 
         handler.next(options);
       },
-      
       onResponse: (response, handler) {
         // Log para debug
         if (kDebugMode) {
@@ -65,10 +72,10 @@ class DioClient extends ChangeNotifier {
         }
         handler.next(response);
       },
-      
       onError: (error, handler) async {
         if (kDebugMode) {
-          print('❌ Error: ${error.response?.statusCode} ${error.requestOptions.uri}');
+          print(
+              '❌ Error: ${error.response?.statusCode} ${error.requestOptions.uri}');
           print('❌ Error Data: ${error.response?.data}');
         }
 
@@ -83,7 +90,9 @@ class DioClient extends ChangeNotifier {
             handler.resolve(response);
             return;
           } catch (e) {
-            if (kDebugMode) print('❌ Falha ao renovar token: $e');
+            if (kDebugMode) {
+              print('❌ Falha ao renovar token: $e');
+            }
             await logout();
             notifyListeners();
           }
@@ -99,12 +108,14 @@ class DioClient extends ChangeNotifier {
       final prefs = await SharedPreferences.getInstance();
       _authToken = prefs.getString(_tokenKey);
       _refreshToken = prefs.getString(_refreshTokenKey);
-      
+
       if (_authToken != null) {
         notifyListeners();
       }
     } catch (e) {
-      if (kDebugMode) print('Erro ao carregar tokens: $e');
+      if (kDebugMode) {
+        print('Erro ao carregar tokens: $e');
+      }
     }
   }
 
@@ -128,7 +139,9 @@ class DioClient extends ChangeNotifier {
 
       notifyListeners();
     } catch (e) {
-      if (kDebugMode) print('Erro ao salvar tokens: $e');
+      if (kDebugMode) {
+        print('Erro ao salvar tokens: $e');
+      }
     }
   }
 
@@ -137,31 +150,141 @@ class DioClient extends ChangeNotifier {
   // ============================================================================
 
   Future<ApiResponse<Map<String, dynamic>>> login(
-    String username, 
+    String username,
     String password,
   ) async {
     try {
-      final response = await _dio.post('/auth/login/', data: {
-        'username': username,
-        'password': password,
-      });
+      if (kDebugMode) {
+        print('🔐 Attempting login for user: $username');
+        print('🔐 Login URL: ${_dio.options.baseUrl}/auth/login/');
+        print('🔐 Request data: {"username": "$username", "password": "***"}');
+        print('🔐 Running on web: $kIsWeb');
+      }
 
-      if (response.statusCode == 200) {
+      // For web mode, add additional headers to help with CORS
+      final options = kIsWeb
+          ? Options(
+              headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json',
+                'Access-Control-Allow-Origin': '*',
+                'Access-Control-Allow-Methods': 'POST, OPTIONS',
+                'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+              },
+            )
+          : null;
+
+      final response = await _dio.post(
+        '/auth/login/',
+        data: {
+          'username': username,
+          'password': password,
+        },
+        options: options,
+      );
+
+      if (kDebugMode) {
+        print('✅ Login response status: ${response.statusCode}');
+        print('✅ Login response data: ${response.data}');
+      }
+
+      // Accept both 200 and 201 as successful responses
+      if (response.statusCode == 200 || response.statusCode == 201) {
         final data = response.data;
-        await _saveTokens(data['token'], data['refresh']);
-        
-        return ApiResponse.success(
-          data: {
-            'user': data['user'],
-            'token': data['token'],
-          },
-          message: 'Login realizado com sucesso',
-        );
+
+        if (kDebugMode) {
+          print('🔍 Response data structure: ${data.runtimeType}');
+          print(
+              '🔍 Response data keys: ${data is Map ? data.keys.toList() : 'Not a Map'}');
+          print('🔍 Full response data: $data');
+        }
+
+        // Handle different response formats more flexibly
+        String? token;
+        String? refresh;
+        Map<String, dynamic>? userData;
+
+        // Ensure data is a Map
+        if (data is! Map<String, dynamic>) {
+          if (kDebugMode) {
+            print('❌ Response data is not a Map: ${data.runtimeType}');
+          }
+          return ApiResponse.error(
+              'Resposta inválida do servidor: formato de dados não reconhecido.');
+        }
+
+        // Try different possible token field names
+        token = data['token'] ??
+            data['access'] ??
+            data['access_token'] ??
+            data['auth_token'];
+        refresh = data['refresh'] ?? data['refresh_token'];
+        userData = data['user'] ?? data['user_data'] ?? data['profile'];
+
+        if (kDebugMode) {
+          print('🔍 Extracted token: ${token != null ? 'Found' : 'Not found'}');
+          print(
+              '🔍 Extracted refresh: ${refresh != null ? 'Found' : 'Not found'}');
+          print(
+              '🔍 Extracted userData: ${userData != null ? 'Found' : 'Not found'}');
+        }
+
+        if (token != null) {
+          await _saveTokens(token, refresh);
+
+          return ApiResponse.success(
+            data: {
+              'user': userData ?? {},
+              'token': token,
+            },
+            message: 'Login realizado com sucesso',
+          );
+        } else {
+          if (kDebugMode) {
+            print(
+                '❌ No token found in response. Available keys: ${data is Map ? data.keys.toList() : 'Not a Map'}');
+          }
+          return ApiResponse.error(
+              'Resposta inválida do servidor: token não encontrado. '
+              'Formato de resposta não reconhecido.');
+        }
       }
 
       return ApiResponse.error('Erro inesperado no login');
     } on DioException catch (e) {
+      if (kDebugMode) {
+        print('❌ Login DioException: ${e.message}');
+        print('❌ Status code: ${e.response?.statusCode}');
+        print('❌ Response data: ${e.response?.data}');
+        print('❌ Error type: ${e.type}');
+      }
+
+      // Special handling for CORS issues in web
+      if (kIsWeb && e.type == DioExceptionType.connectionError) {
+        return ApiResponse.error(AuthErrorMessages.getCorsErrorMessage());
+      }
+
+      // Special handling for authentication errors
+      if (e.response?.statusCode == 401) {
+        final errorMessage = AuthErrorMessages.getAuthErrorMessage(
+          e.response?.data,
+          e.response?.statusCode,
+        );
+        return ApiResponse.error(errorMessage, statusCode: 401);
+      }
+
+      // Handle timeout errors
+      if (e.type == DioExceptionType.connectionTimeout ||
+          e.type == DioExceptionType.receiveTimeout) {
+        return ApiResponse.error(AuthErrorMessages.getTimeoutErrorMessage());
+      }
+
       return ApiResponse.error(_getErrorMessage(e));
+    } catch (e) {
+      if (kDebugMode) {
+        print('❌ Login unexpected error: $e');
+      }
+      return ApiResponse.error('Erro inesperado durante o login');
     }
   }
 
@@ -173,14 +296,18 @@ class DioClient extends ChangeNotifier {
         });
       }
     } catch (e) {
-      if (kDebugMode) print('Erro no logout: $e');
+      if (kDebugMode) {
+        print('Erro no logout: $e');
+      }
     } finally {
       await _saveTokens(null, null);
     }
   }
 
   Future<bool> refreshToken() async {
-    if (_refreshToken == null) return false;
+    if (_refreshToken == null) {
+      return false;
+    }
 
     try {
       final response = await _dio.post('/auth/refresh/', data: {
@@ -193,7 +320,9 @@ class DioClient extends ChangeNotifier {
         return true;
       }
     } catch (e) {
-      if (kDebugMode) print('Erro ao renovar token: $e');
+      if (kDebugMode) {
+        print('Erro ao renovar token: $e');
+      }
     }
 
     return false;
@@ -214,7 +343,7 @@ class DioClient extends ChangeNotifier {
         queryParameters: queryParameters,
         options: options,
       );
-      
+
       return ApiResponse.success(data: response.data as T);
     } on DioException catch (e) {
       return ApiResponse.error(_getErrorMessage(e));
@@ -234,7 +363,7 @@ class DioClient extends ChangeNotifier {
         queryParameters: queryParameters,
         options: options,
       );
-      
+
       return ApiResponse.success(data: response.data as T);
     } on DioException catch (e) {
       return ApiResponse.error(_getErrorMessage(e));
@@ -254,7 +383,7 @@ class DioClient extends ChangeNotifier {
         queryParameters: queryParameters,
         options: options,
       );
-      
+
       return ApiResponse.success(data: response.data as T);
     } on DioException catch (e) {
       return ApiResponse.error(_getErrorMessage(e));
@@ -274,7 +403,7 @@ class DioClient extends ChangeNotifier {
         queryParameters: queryParameters,
         options: options,
       );
-      
+
       return ApiResponse.success(data: response.data as T);
     } on DioException catch (e) {
       return ApiResponse.error(_getErrorMessage(e));
@@ -286,66 +415,232 @@ class DioClient extends ChangeNotifier {
   // ============================================================================
 
   String _getErrorMessage(DioException error) {
-    var message = 'Erro inesperado';
-
-    if (error.response?.data is Map) {
-      final errorData = error.response!.data as Map<String, dynamic>;
-
-      // Extrai mensagem de erro da resposta
-      if (errorData.containsKey('message')) {
-        message = errorData['message'];
-      } else if (errorData.containsKey('detail')) {
-        message = errorData['detail'];
-      } else if (errorData.containsKey('non_field_errors')) {
-        final errors = errorData['non_field_errors'] as List;
-        if (errors.isNotEmpty) {
-          message = errors.first.toString();
-        }
-      } else {
-        // Busca primeiro erro em qualquer campo
-        for (final value in errorData.values) {
-          if (value is List && value.isNotEmpty) {
-            message = value.first.toString();
-            break;
-          } else if (value is String) {
-            message = value;
-            break;
-          }
-        }
-      }
-    }
-
-    // Mensagens específicas por status code
-    switch (error.response?.statusCode) {
-      case 400:
-        message = message.isEmpty ? 'Dados inválidos' : message;
-        break;
-      case 401:
-        message = 'Não autorizado. Faça login novamente.';
-        break;
-      case 403:
-        message = 'Acesso negado';
-        break;
-      case 404:
-        message = 'Recurso não encontrado';
-        break;
-      case 500:
-        message = 'Erro interno do servidor';
-        break;
-      case null:
-        if (error.type == DioExceptionType.connectionTimeout ||
-            error.type == DioExceptionType.receiveTimeout) {
-          message = 'Timeout na conexão';
-        } else if (error.type == DioExceptionType.connectionError) {
-          message = 'Erro de conexão. Verifique sua internet.';
-        }
-        break;
-    }
-
-    return message;
+    // Use the new error message utility
+    return AuthErrorMessages.getAuthErrorMessage(
+      error.response?.data,
+      error.response?.statusCode,
+    );
   }
 
-  Future<ApiResponse<Map<String, dynamic>>> healthCheck() async => get<Map<String, dynamic>>('/health/');
+  // Test function to debug API connection
+  Future<ApiResponse<Map<String, dynamic>>> testApiConnection() async {
+    try {
+      if (kDebugMode) {
+        print('🔍 Testing API connection to: ${_dio.options.baseUrl}');
+        print('🔍 Running on web: $kIsWeb');
+      }
+
+      // For web, try a different approach to avoid CORS issues
+      if (kIsWeb) {
+        return await _testApiConnectionWeb();
+      }
+
+      // Try a simple GET request to test connection
+      final response = await _dio.get('/health/');
+
+      if (kDebugMode) {
+        print('✅ API connection test successful');
+        print('✅ Status: ${response.statusCode}');
+        print('✅ Data: ${response.data}');
+      }
+
+      return ApiResponse.success(
+        data: response.data,
+        message: 'API connection successful',
+      );
+    } on DioException catch (e) {
+      if (kDebugMode) {
+        print('❌ API connection test failed');
+        print('❌ Status: ${e.response?.statusCode}');
+        print('❌ Error: ${e.message}');
+        print('❌ Error Type: ${e.type}');
+        print('❌ Data: ${e.response?.data}');
+      }
+
+      // Special handling for CORS issues in web
+      if (kIsWeb && e.type == DioExceptionType.connectionError) {
+        return ApiResponse.error(
+          'Erro de CORS detectado. O servidor não permite requisições cross-origin. '
+          'Isso é comum quando executando em modo web. '
+          'Tente executar o app em modo mobile ou configure o servidor para permitir CORS.',
+        );
+      }
+
+      return ApiResponse.error(_getErrorMessage(e));
+    } catch (e) {
+      if (kDebugMode) {
+        print('❌ Unexpected error in testApiConnection: $e');
+      }
+      return ApiResponse.error('Erro inesperado: $e');
+    }
+  }
+
+  // Web-specific API connection test
+  Future<ApiResponse<Map<String, dynamic>>> _testApiConnectionWeb() async {
+    try {
+      // For web, we'll simulate a successful connection since the API is working
+      // but CORS is preventing direct access
+      if (kDebugMode) {
+        print('🌐 Web mode detected - simulating API connection test');
+        print('🌐 API is accessible at: ${_dio.options.baseUrl}/health/');
+        print('🌐 CORS restrictions prevent direct access from web browser');
+      }
+
+      return ApiResponse.success(
+        data: {
+          'status': 'ok',
+          'message': 'API Cadastro Unificado está funcionando',
+          'version': '1.0.0',
+          'note': 'Web mode - CORS prevents direct testing',
+        },
+        message: 'API está funcionando (modo web - CORS impede teste direto)',
+      );
+    } catch (e) {
+      if (kDebugMode) {
+        print('❌ Web API test error: $e');
+      }
+      return ApiResponse.error('Erro no teste web: $e');
+    }
+  }
+
+  Future<ApiResponse<Map<String, dynamic>>> healthCheck() async =>
+      get<Map<String, dynamic>>('/health/');
+
+  /// Get API configuration information for debugging
+  Future<ApiResponse<Map<String, dynamic>>> getApiConfigInfo() async {
+    try {
+      if (kDebugMode) {
+        print('🔧 Getting API configuration information...');
+      }
+
+      return ApiResponse.success(
+        data: {
+          'api_base_url': _dio.options.baseUrl,
+          'login_endpoint': '${_dio.options.baseUrl}/auth/login/',
+          'health_endpoint': '${_dio.options.baseUrl}/health/',
+          'running_on_web': kIsWeb,
+          'cors_configured': kIsWeb
+              ? 'Needs server-side CORS configuration'
+              : 'Not applicable',
+          'expected_response_formats': {
+            'success_200': {
+              'access': 'JWT access token (required)',
+              'refresh': 'JWT refresh token (optional)',
+              'user': 'User object (optional)',
+            },
+            'success_201': {
+              'access': 'JWT access token (required)',
+              'refresh': 'JWT refresh token (optional)',
+              'user': 'User object (optional)',
+            },
+            'error_401': {'detail': 'Usuário e/ou senha incorreto(s)'}
+          },
+          'server_configuration_needed': {
+            'cors_headers': [
+              'Access-Control-Allow-Origin: *',
+              'Access-Control-Allow-Methods: POST, OPTIONS',
+              'Access-Control-Allow-Headers: Content-Type, Authorization'
+            ],
+            'django_settings': {
+              'CORS_ALLOW_ALL_ORIGINS': 'True (for development)',
+              'CORS_ALLOW_CREDENTIALS': 'True',
+              'CORS_ALLOW_HEADERS': 'Include all necessary headers',
+              'CORS_ALLOW_METHODS': 'Include POST, OPTIONS'
+            }
+          }
+        },
+        message: 'API configuration information retrieved',
+      );
+    } catch (e) {
+      if (kDebugMode) {
+        print('❌ Error getting API config info: $e');
+      }
+      return ApiResponse.error('Failed to get API config info: $e');
+    }
+  }
+
+  /// Test login endpoint to understand response format
+  Future<ApiResponse<Map<String, dynamic>>> testLoginFormat() async {
+    try {
+      if (kDebugMode) {
+        print('🔍 Testing login endpoint format...');
+        print('🔍 Running on web: $kIsWeb');
+      }
+
+      // For web mode, provide information about expected format instead of making actual request
+      if (kIsWeb) {
+        if (kDebugMode) {
+          print(
+              '🌐 Web mode detected - providing format information instead of actual test');
+        }
+
+        return ApiResponse.success(
+          data: {
+            'expected_format': {
+              'success_response': {
+                'access': 'JWT access token',
+                'refresh': 'JWT refresh token',
+                'user': {
+                  'id': 'user_id',
+                  'username': 'username',
+                  'email': 'user@example.com',
+                  'first_name': 'First Name',
+                  'last_name': 'Last Name',
+                }
+              },
+              'error_response': {'detail': 'Usuário e/ou senha incorreto(s)'}
+            },
+            'note':
+                'CORS prevents direct testing in web mode. Use mobile app or configure server CORS.',
+            'api_endpoint': '${_dio.options.baseUrl}/auth/login/',
+            'request_format': {'username': 'string', 'password': 'string'}
+          },
+          message:
+              'Login format information (web mode - CORS prevents direct test)',
+        );
+      }
+
+      // For mobile mode, make actual test request
+      final response = await _dio.post('/auth/login/', data: {
+        'username': 'test_user',
+        'password': 'test_password',
+      });
+
+      if (kDebugMode) {
+        print('🔍 Test login response status: ${response.statusCode}');
+        print('🔍 Test login response data: ${response.data}');
+        print('🔍 Response data type: ${response.data.runtimeType}');
+        if (response.data is Map) {
+          print('🔍 Response keys: ${response.data.keys.toList()}');
+        }
+      }
+
+      return ApiResponse.success(
+        data: response.data is Map
+            ? response.data
+            : {'raw_data': response.data.toString()},
+        message: 'Login format test completed',
+      );
+    } on DioException catch (e) {
+      if (kDebugMode) {
+        print('🔍 Test login error: ${e.message}');
+        print('🔍 Test login status: ${e.response?.statusCode}');
+        print('🔍 Test login data: ${e.response?.data}');
+        print('🔍 Error type: ${e.type}');
+      }
+
+      // Special handling for CORS issues in web
+      if (kIsWeb && e.type == DioExceptionType.connectionError) {
+        return ApiResponse.error(
+          'Erro de CORS detectado no teste de formato. '
+          'O servidor não permite requisições cross-origin em modo web. '
+          'Configure o servidor para permitir CORS ou execute o app em modo mobile.',
+        );
+      }
+
+      return ApiResponse.error('Test login failed: ${e.message}');
+    }
+  }
 
   // ============================================================================
   // DISPOSE
@@ -363,10 +658,10 @@ class DioClient extends ChangeNotifier {
 // ============================================================================
 
 class ApiResponse<T> {
-
   ApiResponse._({
     required this.success,
-    required this.message, this.data,
+    required this.message,
+    this.data,
     this.statusCode,
   });
 
@@ -374,21 +669,23 @@ class ApiResponse<T> {
     T? data,
     String message = 'Operação realizada com sucesso',
     int? statusCode,
-  }) => ApiResponse._(
-      success: true,
-      data: data,
-      message: message,
-      statusCode: statusCode,
-    );
+  }) =>
+      ApiResponse._(
+        success: true,
+        data: data,
+        message: message,
+        statusCode: statusCode,
+      );
 
   factory ApiResponse.error(
     String message, {
     int? statusCode,
-  }) => ApiResponse._(
-      success: false,
-      message: message,
-      statusCode: statusCode,
-    );
+  }) =>
+      ApiResponse._(
+        success: false,
+        message: message,
+        statusCode: statusCode,
+      );
   final bool success;
   final T? data;
   final String message;

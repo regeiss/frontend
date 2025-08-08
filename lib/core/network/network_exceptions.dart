@@ -23,6 +23,7 @@ class NetworkExceptions with _$NetworkExceptions {
   const factory NetworkExceptions.defaultError(String error) = DefaultError;
   const factory NetworkExceptions.unexpectedError() = UnexpectedError;
 
+  // ignore: prefer_constructors_over_static_methods
   static NetworkExceptions handleError(dynamic error) {
     if (error is DioException) {
       switch (error.type) {

@@ -36,6 +36,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   Future<AuthTokens> login(LoginRequest loginRequest) async {
     try {
       AppLogger.network('Attempting login', data: loginRequest.toJson());
+      AppLogger.info('Login URL: ${_dio.options.baseUrl}/auth/login/');
 
       // CORREÇÃO: Usar a instância _dio em vez dos métodos estáticos DioClient
       final response = await _dio.post(
@@ -43,21 +44,120 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
         data: loginRequest.toJson(),
       );
 
-      if (response.statusCode == 200 && response.data['success'] == true) {
-        final authTokens = AuthTokens(
-          accessToken: response.data['token'],
-          refreshToken: response.data['refresh'],
-          user: User.fromJson(response.data['user']),
-        );
+      AppLogger.info('Login response status: ${response.statusCode}');
+      AppLogger.info('Login response data: ${response.data}');
 
-        AppLogger.info(
-            'Login successful for user: ${authTokens.user.username}');
-        return authTokens;
+      // Handle different response formats
+      if (response.statusCode == 200) {
+        final data = response.data;
+
+        // Check for different possible response formats
+        String? accessToken;
+        String? refreshToken;
+        Map<String, dynamic>? userData;
+
+        // Format 1: success field with token/refresh/user
+        if (data['success'] == true) {
+          accessToken = data['token'];
+          refreshToken = data['refresh'];
+          userData = data['user'];
+        }
+        // Format 2: direct access/refresh tokens (API format)
+        else if (data['access'] != null) {
+          accessToken = data['access'];
+          refreshToken = data['refresh'];
+          userData = data['user']; // May be null, we'll handle this
+        }
+        // Format 3: just token field
+        else if (data['token'] != null) {
+          accessToken = data['token'];
+          refreshToken = data['refresh'];
+          userData = data['user'];
+        }
+
+        if (accessToken != null) {
+          // If no user data in response, we'll need to fetch it separately
+          // For now, create a minimal user object or fetch user profile
+          User user;
+          if (userData != null) {
+            user = User.fromJson(userData);
+          } else {
+            // Create a minimal user object - we'll fetch full profile later
+            user = User(
+              id: 0, // Will be updated when we fetch user profile
+              username: '', // Will be updated when we fetch user profile
+              email: '', // Will be updated when we fetch user profile
+              isStaff: false, // Will be updated when we fetch user profile
+              isActive: true, // Will be updated when we fetch user profile
+              dateJoined:
+                  DateTime.now(), // Will be updated when we fetch user profile
+              name: '', // Will be updated when we fetch user profile
+              firstName: '', // Will be updated when we fetch user profile
+              lastName: '', // Will be updated when we fetch user profile
+            );
+          }
+
+          final authTokens = AuthTokens(
+            accessToken: accessToken,
+            refreshToken: refreshToken ?? '',
+            user: user,
+          );
+
+          AppLogger.info('Login successful - tokens received');
+          return authTokens;
+        } else {
+          throw Exception('Invalid response format: missing access token');
+        }
       } else {
-        throw Exception(response.data['message'] ?? 'Login failed');
+        // Log the actual response for debugging
+        AppLogger.error(
+            'Login failed with status ${response.statusCode} - Response: ${response.data}');
+
+        // Handle different error response formats
+        var errorMessage = 'Login failed';
+
+        if (response.data is Map<String, dynamic>) {
+          final data = response.data as Map<String, dynamic>;
+
+          // Try different possible error message fields
+          if (data['message'] != null) {
+            errorMessage = data['message'].toString();
+          } else if (data['error'] != null) {
+            errorMessage = data['error'].toString();
+          } else if (data['detail'] != null) {
+            errorMessage = data['detail'].toString();
+          } else {
+            errorMessage = 'Login failed with status ${response.statusCode}';
+          }
+        } else {
+          errorMessage = 'Login failed with status ${response.statusCode}';
+        }
+
+        throw Exception(errorMessage);
       }
+    } on DioException catch (e) {
+      AppLogger.error('Login request failed with DioException', e);
+      AppLogger.error('Error response: ${e.response?.data}');
+      AppLogger.error('Error status: ${e.response?.statusCode}');
+
+      // Provide more specific error messages
+      String errorMessage = 'Login failed';
+
+      if (e.response?.statusCode == 401) {
+        errorMessage = 'Credenciais inválidas. Verifique seu usuário e senha.';
+      } else if (e.response?.statusCode == 400) {
+        errorMessage = 'Dados de login inválidos.';
+      } else if (e.response?.statusCode == 500) {
+        errorMessage = 'Erro interno do servidor. Tente novamente.';
+      } else if (e.type == DioExceptionType.connectionTimeout) {
+        errorMessage = 'Timeout na conexão. Verifique sua internet.';
+      } else if (e.type == DioExceptionType.connectionError) {
+        errorMessage = 'Erro de conexão. Verifique sua internet.';
+      }
+
+      throw Exception(errorMessage);
     } catch (e) {
-      AppLogger.error('Login request failed', e);
+      AppLogger.error('Login request failed with unexpected error', e);
       rethrow;
     }
   }
@@ -164,9 +264,15 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   }) async {
     try {
       final data = <String, dynamic>{};
-      if (firstName != null) data['first_name'] = firstName;
-      if (lastName != null) data['last_name'] = lastName;
-      if (email != null) data['email'] = email;
+      if (firstName != null) {
+        data['first_name'] = firstName;
+      }
+      if (lastName != null) {
+        data['last_name'] = lastName;
+      }
+      if (email != null) {
+        data['email'] = email;
+      }
 
       AppLogger.network('Updating user profile', data: data);
 

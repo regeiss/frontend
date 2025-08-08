@@ -17,12 +17,12 @@ mixin _$User {
   int get id;
   String get username;
   String get email;
-  bool get isStaff; // ← Quebra de linha aqui
-  bool get isActive; // ← Quebra de linha aqui
-  DateTime get dateJoined; // ← Quebra de linha aqui
+  bool? get isStaff; // Made nullable to handle API response
+  bool? get isActive; // Made nullable to handle API response
+  DateTime get dateJoined;
+  String get name;
   String? get firstName;
   String? get lastName;
-  String get name;
 
   /// Create a copy of User
   /// with the given fields replaced by the non-null parameter values.
@@ -48,21 +48,21 @@ mixin _$User {
                 other.isActive == isActive) &&
             (identical(other.dateJoined, dateJoined) ||
                 other.dateJoined == dateJoined) &&
+            (identical(other.name, name) || other.name == name) &&
             (identical(other.firstName, firstName) ||
                 other.firstName == firstName) &&
             (identical(other.lastName, lastName) ||
-                other.lastName == lastName) &&
-            (identical(other.name, name) || other.name == name));
+                other.lastName == lastName));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(runtimeType, id, username, email, isStaff,
-      isActive, dateJoined, firstName, lastName, name);
+      isActive, dateJoined, name, firstName, lastName);
 
   @override
   String toString() {
-    return 'User(id: $id, username: $username, email: $email, isStaff: $isStaff, isActive: $isActive, dateJoined: $dateJoined, firstName: $firstName, lastName: $lastName, name: $name)';
+    return 'User(id: $id, username: $username, email: $email, isStaff: $isStaff, isActive: $isActive, dateJoined: $dateJoined, name: $name, firstName: $firstName, lastName: $lastName)';
   }
 }
 
@@ -75,12 +75,12 @@ abstract mixin class $UserCopyWith<$Res> {
       {int id,
       String username,
       String email,
-      bool isStaff,
-      bool isActive,
+      bool? isStaff,
+      bool? isActive,
       DateTime dateJoined,
+      String name,
       String? firstName,
-      String? lastName,
-      String name});
+      String? lastName});
 }
 
 /// @nodoc
@@ -98,12 +98,12 @@ class _$UserCopyWithImpl<$Res> implements $UserCopyWith<$Res> {
     Object? id = null,
     Object? username = null,
     Object? email = null,
-    Object? isStaff = null,
-    Object? isActive = null,
+    Object? isStaff = freezed,
+    Object? isActive = freezed,
     Object? dateJoined = null,
+    Object? name = null,
     Object? firstName = freezed,
     Object? lastName = freezed,
-    Object? name = null,
   }) {
     return _then(_self.copyWith(
       id: null == id
@@ -118,18 +118,22 @@ class _$UserCopyWithImpl<$Res> implements $UserCopyWith<$Res> {
           ? _self.email
           : email // ignore: cast_nullable_to_non_nullable
               as String,
-      isStaff: null == isStaff
+      isStaff: freezed == isStaff
           ? _self.isStaff
           : isStaff // ignore: cast_nullable_to_non_nullable
-              as bool,
-      isActive: null == isActive
+              as bool?,
+      isActive: freezed == isActive
           ? _self.isActive
           : isActive // ignore: cast_nullable_to_non_nullable
-              as bool,
+              as bool?,
       dateJoined: null == dateJoined
           ? _self.dateJoined
           : dateJoined // ignore: cast_nullable_to_non_nullable
               as DateTime,
+      name: null == name
+          ? _self.name
+          : name // ignore: cast_nullable_to_non_nullable
+              as String,
       firstName: freezed == firstName
           ? _self.firstName
           : firstName // ignore: cast_nullable_to_non_nullable
@@ -138,10 +142,6 @@ class _$UserCopyWithImpl<$Res> implements $UserCopyWith<$Res> {
           ? _self.lastName
           : lastName // ignore: cast_nullable_to_non_nullable
               as String?,
-      name: null == name
-          ? _self.name
-          : name // ignore: cast_nullable_to_non_nullable
-              as String,
     ));
   }
 }
@@ -243,12 +243,12 @@ extension UserPatterns on User {
             int id,
             String username,
             String email,
-            bool isStaff,
-            bool isActive,
+            bool? isStaff,
+            bool? isActive,
             DateTime dateJoined,
+            String name,
             String? firstName,
-            String? lastName,
-            String name)?
+            String? lastName)?
         $default, {
     required TResult orElse(),
   }) {
@@ -262,9 +262,9 @@ extension UserPatterns on User {
             _that.isStaff,
             _that.isActive,
             _that.dateJoined,
+            _that.name,
             _that.firstName,
-            _that.lastName,
-            _that.name);
+            _that.lastName);
       case _:
         return orElse();
     }
@@ -289,12 +289,12 @@ extension UserPatterns on User {
             int id,
             String username,
             String email,
-            bool isStaff,
-            bool isActive,
+            bool? isStaff,
+            bool? isActive,
             DateTime dateJoined,
+            String name,
             String? firstName,
-            String? lastName,
-            String name)
+            String? lastName)
         $default,
   ) {
     final _that = this;
@@ -307,9 +307,9 @@ extension UserPatterns on User {
             _that.isStaff,
             _that.isActive,
             _that.dateJoined,
+            _that.name,
             _that.firstName,
-            _that.lastName,
-            _that.name);
+            _that.lastName);
       case _:
         throw StateError('Unexpected subclass');
     }
@@ -333,12 +333,12 @@ extension UserPatterns on User {
             int id,
             String username,
             String email,
-            bool isStaff,
-            bool isActive,
+            bool? isStaff,
+            bool? isActive,
             DateTime dateJoined,
+            String name,
             String? firstName,
-            String? lastName,
-            String name)?
+            String? lastName)?
         $default,
   ) {
     final _that = this;
@@ -351,9 +351,9 @@ extension UserPatterns on User {
             _that.isStaff,
             _that.isActive,
             _that.dateJoined,
+            _that.name,
             _that.firstName,
-            _that.lastName,
-            _that.name);
+            _that.lastName);
       case _:
         return null;
     }
@@ -367,12 +367,12 @@ class _User implements User {
       {required this.id,
       required this.username,
       required this.email,
-      required this.isStaff,
-      required this.isActive,
+      this.isStaff,
+      this.isActive,
       required this.dateJoined,
+      required this.name,
       this.firstName,
-      this.lastName,
-      required this.name});
+      this.lastName});
   factory _User.fromJson(Map<String, dynamic> json) => _$UserFromJson(json);
 
   @override
@@ -382,20 +382,19 @@ class _User implements User {
   @override
   final String email;
   @override
-  final bool isStaff;
-// ← Quebra de linha aqui
+  final bool? isStaff;
+// Made nullable to handle API response
   @override
-  final bool isActive;
-// ← Quebra de linha aqui
+  final bool? isActive;
+// Made nullable to handle API response
   @override
   final DateTime dateJoined;
-// ← Quebra de linha aqui
+  @override
+  final String name;
   @override
   final String? firstName;
   @override
   final String? lastName;
-  @override
-  final String name;
 
   /// Create a copy of User
   /// with the given fields replaced by the non-null parameter values.
@@ -426,21 +425,21 @@ class _User implements User {
                 other.isActive == isActive) &&
             (identical(other.dateJoined, dateJoined) ||
                 other.dateJoined == dateJoined) &&
+            (identical(other.name, name) || other.name == name) &&
             (identical(other.firstName, firstName) ||
                 other.firstName == firstName) &&
             (identical(other.lastName, lastName) ||
-                other.lastName == lastName) &&
-            (identical(other.name, name) || other.name == name));
+                other.lastName == lastName));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(runtimeType, id, username, email, isStaff,
-      isActive, dateJoined, firstName, lastName, name);
+      isActive, dateJoined, name, firstName, lastName);
 
   @override
   String toString() {
-    return 'User(id: $id, username: $username, email: $email, isStaff: $isStaff, isActive: $isActive, dateJoined: $dateJoined, firstName: $firstName, lastName: $lastName, name: $name)';
+    return 'User(id: $id, username: $username, email: $email, isStaff: $isStaff, isActive: $isActive, dateJoined: $dateJoined, name: $name, firstName: $firstName, lastName: $lastName)';
   }
 }
 
@@ -454,12 +453,12 @@ abstract mixin class _$UserCopyWith<$Res> implements $UserCopyWith<$Res> {
       {int id,
       String username,
       String email,
-      bool isStaff,
-      bool isActive,
+      bool? isStaff,
+      bool? isActive,
       DateTime dateJoined,
+      String name,
       String? firstName,
-      String? lastName,
-      String name});
+      String? lastName});
 }
 
 /// @nodoc
@@ -477,12 +476,12 @@ class __$UserCopyWithImpl<$Res> implements _$UserCopyWith<$Res> {
     Object? id = null,
     Object? username = null,
     Object? email = null,
-    Object? isStaff = null,
-    Object? isActive = null,
+    Object? isStaff = freezed,
+    Object? isActive = freezed,
     Object? dateJoined = null,
+    Object? name = null,
     Object? firstName = freezed,
     Object? lastName = freezed,
-    Object? name = null,
   }) {
     return _then(_User(
       id: null == id
@@ -497,18 +496,22 @@ class __$UserCopyWithImpl<$Res> implements _$UserCopyWith<$Res> {
           ? _self.email
           : email // ignore: cast_nullable_to_non_nullable
               as String,
-      isStaff: null == isStaff
+      isStaff: freezed == isStaff
           ? _self.isStaff
           : isStaff // ignore: cast_nullable_to_non_nullable
-              as bool,
-      isActive: null == isActive
+              as bool?,
+      isActive: freezed == isActive
           ? _self.isActive
           : isActive // ignore: cast_nullable_to_non_nullable
-              as bool,
+              as bool?,
       dateJoined: null == dateJoined
           ? _self.dateJoined
           : dateJoined // ignore: cast_nullable_to_non_nullable
               as DateTime,
+      name: null == name
+          ? _self.name
+          : name // ignore: cast_nullable_to_non_nullable
+              as String,
       firstName: freezed == firstName
           ? _self.firstName
           : firstName // ignore: cast_nullable_to_non_nullable
@@ -517,10 +520,6 @@ class __$UserCopyWithImpl<$Res> implements _$UserCopyWith<$Res> {
           ? _self.lastName
           : lastName // ignore: cast_nullable_to_non_nullable
               as String?,
-      name: null == name
-          ? _self.name
-          : name // ignore: cast_nullable_to_non_nullable
-              as String,
     ));
   }
 }

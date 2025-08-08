@@ -15,6 +15,7 @@ class OnboardingPage extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    // ignore: unused_local_variable
     final pageController = usePageController();
 
     return Scaffold(
@@ -64,79 +65,85 @@ class OnboardingPage extends HookConsumerWidget {
   }
 
   List<PageViewModel> _getPages() => [
-      PageViewModel(
-        title: 'Bem-vindo ao ${Env.appName}',
-        body: 'Sua plataforma completa para gerenciamento de cadastros unificados.',
-        image: _buildImage('assets/images/onboarding_1.png', Icons.people),
-        decoration: _getPageDecoration(),
-      ),
-      PageViewModel(
-        title: 'Gestão Completa',
-        body: 'Gerencie responsáveis, membros e suas demandas de forma integrada e eficiente.',
-        image: _buildImage('assets/images/onboarding_2.png', Icons.dashboard),
-        decoration: _getPageDecoration(),
-      ),
-      PageViewModel(
-        title: 'Demandas Organizadas',
-        body: 'Acompanhe demandas de saúde, educação, habitação, meio ambiente e internas.',
-        image: _buildImage('assets/images/onboarding_3.png', Icons.assignment),
-        decoration: _getPageDecoration(),
-      ),
-      PageViewModel(
-        title: 'Relatórios e Insights',
-        body: 'Tenha acesso a relatórios detalhados e insights para tomada de decisões.',
-        image: _buildImage('assets/images/onboarding_4.png', Icons.analytics),
-        decoration: _getPageDecoration(),
-      ),
-      PageViewModel(
-        title: 'Sincronização em Tempo Real',
-        body: 'Todos os dados são sincronizados automaticamente com o servidor central.',
-        image: _buildImage('assets/images/onboarding_5.png', Icons.sync),
-        decoration: _getPageDecoration(),
-      ),
-    ];
+        PageViewModel(
+          title: 'Bem-vindo ao ${Env.appName}',
+          body:
+              'Sua plataforma completa para gerenciamento de cadastros unificados.',
+          image: _buildImage('assets/images/onboarding_1.png', Icons.people),
+          decoration: _getPageDecoration(),
+        ),
+        PageViewModel(
+          title: 'Gestão Completa',
+          body:
+              'Gerencie responsáveis, membros e suas demandas de forma integrada e eficiente.',
+          image: _buildImage('assets/images/onboarding_2.png', Icons.dashboard),
+          decoration: _getPageDecoration(),
+        ),
+        PageViewModel(
+          title: 'Demandas Organizadas',
+          body:
+              'Acompanhe demandas de saúde, educação, habitação, meio ambiente e internas.',
+          image:
+              _buildImage('assets/images/onboarding_3.png', Icons.assignment),
+          decoration: _getPageDecoration(),
+        ),
+        PageViewModel(
+          title: 'Relatórios e Insights',
+          body:
+              'Tenha acesso a relatórios detalhados e insights para tomada de decisões.',
+          image: _buildImage('assets/images/onboarding_4.png', Icons.analytics),
+          decoration: _getPageDecoration(),
+        ),
+        PageViewModel(
+          title: 'Sincronização em Tempo Real',
+          body:
+              'Todos os dados são sincronizados automaticamente com o servidor central.',
+          image: _buildImage('assets/images/onboarding_5.png', Icons.sync),
+          decoration: _getPageDecoration(),
+        ),
+      ];
 
   Widget _buildImage(String assetName, IconData fallbackIcon) => Container(
-      width: 200,
-      height: 200,
-      decoration: BoxDecoration(
-        color: AppColors.primaryColor.withOpacity(0.1),
-        borderRadius: BorderRadius.circular(100),
-      ),
-      child: Icon(
-        fallbackIcon,
-        size: 80,
-        color: AppColors.primaryColor,
-      ),
-    );
+        width: 200,
+        height: 200,
+        decoration: BoxDecoration(
+          color: AppColors.primaryColor.withValues(alpha: 0.1),
+          borderRadius: BorderRadius.circular(100),
+        ),
+        child: Icon(
+          fallbackIcon,
+          size: 80,
+          color: AppColors.primaryColor,
+        ),
+      );
 
   PageDecoration _getPageDecoration() => const PageDecoration(
-      titleTextStyle: TextStyle(
-        fontSize: 28,
-        fontWeight: FontWeight.w700,
-        color: AppColors.textPrimaryColor,
-      ),
-      bodyTextStyle: TextStyle(
-        fontSize: 18,
-        color: AppColors.textSecondaryColor,
-        height: 1.4,
-      ),
-      bodyPadding: EdgeInsets.fromLTRB(16, 0, 16, 16),
-      pageColor: AppColors.backgroundColor,
-      imagePadding: EdgeInsets.only(top: 40, bottom: 24),
-      contentMargin: EdgeInsets.symmetric(horizontal: 16),
-    );
+        titleTextStyle: TextStyle(
+          fontSize: 28,
+          fontWeight: FontWeight.w700,
+          color: AppColors.textPrimaryColor,
+        ),
+        bodyTextStyle: TextStyle(
+          fontSize: 18,
+          color: AppColors.textSecondaryColor,
+          height: 1.4,
+        ),
+        bodyPadding: EdgeInsets.fromLTRB(16, 0, 16, 16),
+        pageColor: AppColors.backgroundColor,
+        imagePadding: EdgeInsets.only(top: 40, bottom: 24),
+        contentMargin: EdgeInsets.symmetric(horizontal: 16),
+      );
 
   Future<void> _onIntroEnd(BuildContext context) async {
     try {
       AppLogger.info('Onboarding completed');
-      
+
       // Mark that the user has completed onboarding
       await SecureStorage.setFirstLaunch(false);
-      
+
       // Check if user is already logged in
       final isLoggedIn = await SecureStorage.isLoggedIn();
-      
+
       if (isLoggedIn) {
         AppLogger.info('User is logged in, navigating to dashboard');
         if (context.mounted) {
@@ -150,7 +157,7 @@ class OnboardingPage extends HookConsumerWidget {
       }
     } catch (e, stackTrace) {
       AppLogger.error('Error completing onboarding', e, stackTrace);
-      
+
       // Fallback to login
       if (context.mounted) {
         context.go('/login');
